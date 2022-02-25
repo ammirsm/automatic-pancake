@@ -1,15 +1,23 @@
 import timeit
 
+import numpy as np
+import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
-from sklearn.naive_bayes import GaussianNB, MultinomialNB
-import pandas as pd
-import numpy as np
+from sklearn.naive_bayes import MultinomialNB
 
 
 class LearningModel:
-    def __init__(self, data, feature_columns, label_column='label', ngram_max=1,
-                 model=MultinomialNB(), the_percentile=50, number_of_sd=3):
+    def __init__(
+        self,
+        data,
+        feature_columns,
+        label_column="label",
+        ngram_max=1,
+        model=MultinomialNB(),
+        the_percentile=50,
+        number_of_sd=3,
+    ):
         self.percentile = the_percentile
         self.features = feature_columns
         self.label_column = label_column
@@ -28,31 +36,31 @@ class LearningModel:
         self.model = model
 
     def restart_model(self):
-        self.data['training_set'] = 0
+        self.data["training_set"] = 0
 
     def _init_data(self):
-        if self.label_column != 'label':
-            self.data['label'] = self.data[self.label_column]
-        self.data['features'] = ''
+        if self.label_column != "label":
+            self.data["label"] = self.data[self.label_column]
+        self.data["features"] = ""
         for f in self.features:
-            self.data['features'] += self.data[f]
-        self.data['training_set'] = 0
-        self.data['proba_history'] = [[] for i in range(self.data.shape[0])]
+            self.data["features"] += self.data[f]
+        self.data["training_set"] = 0
+        self.data["proba_history"] = [[] for i in range(self.data.shape[0])]
 
         self.vectorize_init()
 
     def generate_matrix(self):
-        print(len(self.data.loc[self.data.training_set == 1]['features']))
+        print(len(self.data.loc[self.data.training_set == 1]["features"]))
         start = timeit.default_timer()
         # test_set, training_set = self.vectorize()
         test_set, training_set = self.get_set()
         stop = timeit.default_timer()
-        print('Time: vectorize ', stop - start)
+        print("Time: vectorize ", stop - start)
         start = timeit.default_timer()
-        self.label_set = self.data.loc[self.data.training_set == 1]['label']
+        self.label_set = self.data.loc[self.data.training_set == 1]["label"]
         self.feature_selection(test_set, training_set)
         stop = timeit.default_timer()
-        print('Time: feature_selection ', stop - start)
+        print("Time: feature_selection ", stop - start)
         print(self.training_set.shape)
 
     def feature_selection(self, test_set, training_set):
@@ -63,15 +71,19 @@ class LearningModel:
 
     def vectorize_init(self):
 
-        vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
-                                     stop_words='english', ngram_range=(1, self.ngram_max))
+        vectorizer = TfidfVectorizer(
+            sublinear_tf=True,
+            max_df=0.5,
+            stop_words="english",
+            ngram_range=(1, self.ngram_max),
+        )
 
-        self.features_vectorized = vectorizer.fit_transform(self.data['features'])
+        self.features_vectorized = vectorizer.fit_transform(self.data["features"])
 
-        self.test_set_vectorized = vectorizer.transform(self.data['features'])
+        self.test_set_vectorized = vectorizer.transform(self.data["features"])
 
     def get_set(self):
-        row_index = self.data['training_set'].astype('bool')
+        row_index = self.data["training_set"].astype("bool")
         return self.test_set_vectorized, (self.features_vectorized)[row_index]
 
     # def vectorize(self):
@@ -103,14 +115,18 @@ class LearningModel:
             self.data = self.data.drop(columns=[1])
         self.data = pd.concat([pd.DataFrame(predicted_labels), self.data], axis=1)
 
-        self.data['proba_history'] += pd.DataFrame([[[i]] for i in self.data[0].values.tolist()])[0]
+        self.data["proba_history"] += pd.DataFrame(
+            [[[i]] for i in self.data[0].values.tolist()]
+        )[0]
 
         # for i in range(self.number_of_sd):
         #   if i == 0:
         #     continue
         #   self.data['sd_history_'+str(i - 1)] = self.data['sd_history_'+str(i)]
 
-        self.data['sd_history_' + str(self.sd_counter)] = self.data['proba_history'].apply(lambda x: np.std(x))
+        self.data["sd_history_" + str(self.sd_counter)] = self.data[
+            "proba_history"
+        ].apply(lambda x: np.std(x))
         # delete_header = 'sd_history_' + str(self.sd_counter - self.number_of_sd)
         # if delete_header in list(self.data.columns):
         #   del self.data[delete_header]
