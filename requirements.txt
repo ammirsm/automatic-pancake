@@ -2,7 +2,3 @@ pandas
 scikit-learn
 numpy
 matplotlib
-flake8
-black
-isort
-nox
