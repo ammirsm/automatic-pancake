@@ -89,5 +89,5 @@ if __name__ == "__main__":
     strategies_result_pickle_file_path = argv[1]
     strategies_result = import_data(strategies_result_pickle_file_path)
     # execute only if run as a script
-    for strategy, key in strategies_result:
-        draw(strategy[key], key)
+    for key in strategies_result.keys():
+        draw(strategies_result[key], key)
