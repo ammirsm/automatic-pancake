@@ -1,4 +1,4 @@
-from app.data import Data
+from data import Data
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 

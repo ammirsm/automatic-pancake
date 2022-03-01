@@ -2,8 +2,7 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy
-
-from app.configs import output_dir
+from configs import output_dir
 
 is_exist = os.path.exists(output_dir)
 if not is_exist:

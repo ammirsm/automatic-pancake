@@ -1,9 +1,9 @@
 import timeit
 import warnings
 
-from app.agent import ActiveLearningAgent
-from app.configs import cycle, model_configs, number_of_iterations, strategies
-from app.model import LearningModel
+from agent import ActiveLearningAgent
+from configs import cycle, model_configs, number_of_iterations, strategies
+from model import LearningModel
 
 warnings.filterwarnings("ignore")
 

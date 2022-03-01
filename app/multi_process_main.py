@@ -2,10 +2,10 @@ import multiprocessing
 import timeit
 import warnings
 
-from app.agent import ActiveLearningAgent
-from app.configs import cycle, model_configs, number_of_iterations, strategies
-from app.import_export import export_data
-from app.model import LearningModel
+from agent import ActiveLearningAgent
+from configs import cycle, model_configs, number_of_iterations, strategies
+from import_export import export_data
+from model import LearningModel
 
 warnings.filterwarnings("ignore")
 
