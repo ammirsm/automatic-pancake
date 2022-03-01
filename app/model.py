@@ -1,5 +1,3 @@
-import timeit
-
 import numpy as np
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -27,7 +25,7 @@ class LearningModel:
         self.sd_counter = 0
 
         self._init_data()
-        print(f"number of paper is : {len(self.data)}")
+        # print(f"number of paper is : {len(self.data)}")
 
         self.training_set = None
         self.test_set = None
@@ -50,18 +48,10 @@ class LearningModel:
         self.vectorize_init()
 
     def generate_matrix(self):
-        print(len(self.data.loc[self.data.training_set == 1]["features"]))
-        start = timeit.default_timer()
         # test_set, training_set = self.vectorize()
         test_set, training_set = self.get_set()
-        stop = timeit.default_timer()
-        print("Time: vectorize ", stop - start)
-        start = timeit.default_timer()
         self.label_set = self.data.loc[self.data.training_set == 1]["label"]
         self.feature_selection(test_set, training_set)
-        stop = timeit.default_timer()
-        print("Time: feature_selection ", stop - start)
-        print(self.training_set.shape)
 
     def feature_selection(self, test_set, training_set):
         selector = SelectPercentile(f_classif, percentile=self.percentile)

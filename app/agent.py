@@ -1,3 +1,4 @@
+import json
 import timeit
 
 import matplotlib.pyplot as plt
@@ -137,29 +138,21 @@ class ActiveLearningAgent:
                 <= self.sd_threshold
             ).all():
                 flag = False
-        print(
-            "-----------------------------------check_sd_threshold---------------------------------------------"
-        )
-        print("number of true : ", t)
-        print("avg of number of true : ", t / 3)
-        print("sd counter : ", self.learning_model.sd_counter)
-        print("number of zero training_set : ", data_zero_training_set.shape[0])
-        print("using max_prob : ", flag)
-        print(
-            data_zero_training_set[
-                [
-                    "sd_history_" + str(self.learning_model.sd_counter - 1),
-                    "sd_history_" + str(self.learning_model.sd_counter - 2),
-                    "sd_history_" + str(self.learning_model.sd_counter - 3),
-                ]
-            ].describe()
-        )
-        print(
-            "-----------------------------------END_check_sd_threshold---------------------------------------------"
-        )
         return flag
 
     def start_active_learning(self):
+        print(
+            "-------\n", f"{self.name} - {self.update_training_set_strategy}", "started"
+        )
+        start_time = timeit.default_timer()
+        functinon_time = {
+            "name": self.name,
+            "strategy": self.update_training_set_strategy,
+            "generate_matrix": 0,
+            "train_model": 0,
+            "update_training_set": 0,
+            "total": 0,
+        }
         while (
             len(
                 self.learning_model.data.loc[
@@ -168,19 +161,22 @@ class ActiveLearningAgent:
             )
             > 9
         ):
-            start = timeit.default_timer()
+            # print( 'generate_matrix', f'{self.name} - {self.update_training_set_strategy}')
+            functinon_time["generate_matrix"]
+            tic = timeit.default_timer()
             self.learning_model.generate_matrix()
-            stop = timeit.default_timer()
-            print("Time: generate_matrix ", stop - start)
-            start = timeit.default_timer()
+            functinon_time["generate_matrix"] += timeit.default_timer() - tic
+
+            # print('train_model', f'{self.name} - {self.update_training_set_strategy}')
+            tic = timeit.default_timer()
             self.learning_model.train_model()
-            stop = timeit.default_timer()
-            print("Time: train_model ", stop - start)
-            start = timeit.default_timer()
+            functinon_time["train_model"] += timeit.default_timer() - tic
+
+            # print('update_training_set', f'{self.name} - {self.update_training_set_strategy}')
+            tic = timeit.default_timer()
             self.update_training_set()
-            stop = timeit.default_timer()
-            print("Time: update_training_set ", stop - start)
-            start = timeit.default_timer()
+            functinon_time["update_training_set"] += timeit.default_timer() - tic
+
             self.founded_papers_count.append(
                 len(
                     self.learning_model.data.loc[
@@ -188,9 +184,6 @@ class ActiveLearningAgent:
                     ].loc[self.learning_model.data.label == 1]
                 ),
             )
-            stop = timeit.default_timer()
-            print("Time: founded_papers_count ", stop - start)
-            start = timeit.default_timer()
             self.total_papers_count.append(
                 len(
                     self.learning_model.data.loc[
@@ -198,8 +191,10 @@ class ActiveLearningAgent:
                     ]
                 ),
             )
-            stop = timeit.default_timer()
-            print("Time: total_papers_count ", stop - start, end="\n\n\n")
+        functinon_time["total"] += timeit.default_timer() - start_time
+
+        # print('-------\n', self.name, 'time')
+        print(json.dumps(functinon_time, indent=2), end="\n\n")
 
     def plot(self, **keywords):
         founded_papers_percentile = [

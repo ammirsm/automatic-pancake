@@ -1,10 +1,15 @@
 import timeit
+import warnings
 
 from app.agent import ActiveLearningAgent
 from app.configs import cycle, model_configs, number_of_iterations, strategies
 from app.model import LearningModel
 
+warnings.filterwarnings("ignore")
+
 strategies_result = {}
+
+first = timeit.default_timer()
 
 for strategy in strategies:
     list_of_models_config = []
@@ -37,13 +42,7 @@ for strategy in strategies:
                 update_training_set_strategy=strategy[0],
                 query_ratio=strategy[1],
             )
-            print("******************************")
-            print(key)
-            print("******************************")
-            start = timeit.default_timer()
             config["agent"].start_active_learning()
-            stop = timeit.default_timer()
-            print("Time: ", stop - start)
             model_configs[key]["plot_data"] = model_configs[key]["agent"].plot_data()
             model_configs[key]["learning_model"] = None
             model_configs[key]["agent"] = None
@@ -52,3 +51,6 @@ for strategy in strategies:
     strategies_result[
         str(strategy[0]) + " - " + str(strategy[1])
     ] = list_of_models_config
+
+second = timeit.default_timer()
+print("\n Total Time : ", second - first)
