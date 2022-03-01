@@ -293,5 +293,4 @@ pip-selfcheck.json
 
 env/
 asset/
-setup.cfg
 app/configs.py
