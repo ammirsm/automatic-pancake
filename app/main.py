@@ -1,20 +1,18 @@
 import timeit
 
-from agent import ActiveLearningAgent
-from configs import cycle, model_configs, number_of_iterations, strategies, title_data
-from model import LearningModel
+from app.agent import ActiveLearningAgent
+from app.configs import cycle, model_configs, number_of_iterations, strategies
+from app.model import LearningModel
 
 strategies_result = {}
 
 for strategy in strategies:
     list_of_models_config = []
     for i in range(number_of_iterations):
-        # title_data._shuffle_data()
-        # fulltext_data._shuffle_data()
 
-        title_data.data.head()
+        # for data_set in data_config:
+        #     data_set._shuffle_data()
 
-        # add percentile
         the_percentile_title = 100
         the_percentile_fulltext = 20
 
