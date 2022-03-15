@@ -79,3 +79,5 @@ model_configs = {
 }
 
 output_dir = 'output'
+
+result = 'result/'
