@@ -294,3 +294,5 @@ pip-selfcheck.json
 env/
 asset/
 app/configs.py
+result/
+output/
