@@ -4,13 +4,15 @@ import matplotlib.pyplot as plt
 import numpy
 from configs import output_dir
 
+from app.draw_utils import generate_mean_plot_data, generate_strategy_data
+
 is_exist = os.path.exists(output_dir)
 if not is_exist:
     # Create a new directory because it does not exist
     os.makedirs(output_dir)
 
 
-def draw(list_of_models_config, title):
+def draw(list_of_models_config, title="title"):
     model_configs = list_of_models_config[0]
 
     def mean(_list):
@@ -81,12 +83,18 @@ def draw(list_of_models_config, title):
 
 
 if __name__ == "__main__":
+    import os
     from sys import argv
 
-    from import_export import import_data
-
     strategies_result_pickle_file_path = argv[1]
-    strategies_result = import_data(strategies_result_pickle_file_path)
-    # execute only if run as a script
-    for key in strategies_result.keys():
-        draw(strategies_result[key], key)
+
+    if not strategies_result_pickle_file_path[-1] == "/":
+        strategies_result_pickle_file_path += "/"
+
+    strategy_data = {}
+    generate_strategy_data(strategy_data)
+
+    strategy_mean_data = {}
+    generate_mean_plot_data(strategy_mean_data, strategy_data)
+
+    # draw_model(strategies_result)
