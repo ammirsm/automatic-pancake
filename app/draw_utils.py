@@ -105,7 +105,7 @@ def draw_helper(strategies_result_pickle_file_path):
         plt.ylabel("% of found relavant papers")
         plt.xlabel("# of reviewed papers")
         for model_k, model_d in strategy_d.items():
-            plt.plot(model_d, y_axis, label=model_k)
+            plt.plot(y_axis, model_d, label=model_k)
         output_file_path = os.path.join(output_path, f"{strategy_k}.pdf")
         plt.legend()
         plt.savefig(output_file_path)
