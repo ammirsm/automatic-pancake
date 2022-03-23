@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import numpy
 from configs import output_dir
 
-from app.draw_utils import generate_mean_plot_data, generate_strategy_data
+from app.draw_utils import draw_helper
 
 is_exist = os.path.exists(output_dir)
 if not is_exist:
@@ -87,14 +87,5 @@ if __name__ == "__main__":
     from sys import argv
 
     strategies_result_pickle_file_path = argv[1]
-
-    if not strategies_result_pickle_file_path[-1] == "/":
-        strategies_result_pickle_file_path += "/"
-
-    strategy_data = {}
-    generate_strategy_data(strategy_data)
-
-    strategy_mean_data = {}
-    generate_mean_plot_data(strategy_mean_data, strategy_data)
-
-    # draw_model(strategies_result)
+    draw_helper(strategies_result_pickle_file_path)
+    print("finish")

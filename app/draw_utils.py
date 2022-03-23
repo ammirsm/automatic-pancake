@@ -3,7 +3,6 @@ import os
 from matplotlib import pyplot as plt
 
 from app.configs import output_dir
-from app.draw import strategies_result_pickle_file_path
 from app.import_export import import_data
 
 
@@ -26,6 +25,8 @@ def save_plot(label, model_config, x, y):
 
 
 def iteration_plot_data(the_iteration_path, the_iteration_data):
+    first = True
+    y_axis = []
     for model in os.listdir(the_iteration_path):
         model_path = os.path.join(the_iteration_path, model)
         model_config = import_data(model_path)
@@ -37,7 +38,10 @@ def iteration_plot_data(the_iteration_path, the_iteration_data):
             the_iteration_data[model_config["agent"].name].append(
                 model_config["plot_data"][1]
             )
-    return the_iteration_data
+        if first:
+            y_axis = [model_config["plot_data"][0], model_config["number_of_relevant"]]
+            first = False
+    return y_axis
 
 
 def mean(_list):
@@ -63,13 +67,46 @@ def generate_mean_plot_data(strategy_mean_data, strategy_data):
             )
 
 
-def generate_strategy_data(strategy_data):
-    list_of_strategy = os.listdir(strategies_result_pickle_file_path)
+def generate_strategy_data(strategy_data, path, y_axis):
+    list_of_strategy = os.listdir(path)
+    list_of_strategy.remove("output")
     for strategy in list_of_strategy:
-        strategy_path = os.path.join(strategies_result_pickle_file_path, strategy)
+        strategy_path = os.path.join(path, strategy)
         list_of_iterations = os.listdir(strategy_path)
         iteration_data = {}
         for iteration in list_of_iterations:
             iteration_path = os.path.join(strategy_path, iteration)
-            iteration_plot_data(iteration_path, iteration_data)
+            if y_axis:
+                iteration_plot_data(iteration_path, iteration_data)
+            else:
+                y_axis = iteration_plot_data(iteration_path, iteration_data)
         strategy_data[strategy] = iteration_data
+    return y_axis
+
+
+def draw_helper(strategies_result_pickle_file_path):
+    if not strategies_result_pickle_file_path[-1] == "/":
+        strategies_result_pickle_file_path += "/"
+    output_path = os.path.join(strategies_result_pickle_file_path, output_dir)
+    os.makedirs(output_path, exist_ok=True)
+    strategy_data = {}
+    y_axis = []
+    y_axis = generate_strategy_data(
+        strategy_data, strategies_result_pickle_file_path, y_axis
+    )
+    # number_of_relevant = y_axis[1]
+    y_axis = y_axis[0]
+    strategy_mean_data = {}
+    generate_mean_plot_data(strategy_mean_data, strategy_data)
+    for strategy_k, strategy_d in strategy_mean_data.items():
+        plt.rcParams["figure.figsize"] = [15, 9]
+        plt.rcParams["figure.dpi"] = 100
+        plt.title(strategy_k)
+        plt.ylabel("% of found relavant papers")
+        plt.xlabel("# of reviewed papers")
+        for model_k, model_d in strategy_d.items():
+            plt.plot(model_d, y_axis, label=model_k)
+        output_file_path = os.path.join(output_path, f"{strategy_k}.pdf")
+        plt.legend()
+        plt.savefig(output_file_path)
+        plt.clf()  # clear figure
