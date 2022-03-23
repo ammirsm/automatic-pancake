@@ -8,6 +8,8 @@ from configs import cycle, model_configs, number_of_iterations, result, strategi
 from import_export import export_data
 from model import LearningModel
 
+from app.draw_utils import draw_helper
+
 warnings.filterwarnings("ignore")
 
 
@@ -44,6 +46,7 @@ def start_active_learning(key, config, strategies_result, strategy_key, dirs):
     config["learning_model"] = None
     config["agent"] = None
     strategies_result[strategy_key].append(model_configs)
+    return path
 
 
 if __name__ == "__main__":
@@ -64,12 +67,11 @@ if __name__ == "__main__":
             dirs[2] = str(i)
             for key, config in model_configs.items():
                 print(counter)
-                start_active_learning(
+                path = start_active_learning(
                     key, config, strategies_result, strategy_key, dirs.copy()
                 )
                 counter += 1
 
     second = timeit.default_timer()
+    draw_helper(os.path.join(result, dirs[0]))
     print("Total Time : ", second - first)
-
-
