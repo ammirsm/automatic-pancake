@@ -12,35 +12,37 @@ strategies = [
     # ("mix_checking_inside", 5),
 ]
 
-number_of_papers = 100
+number_of_papers = None
 number_of_iterations = 1
 sd_threshold = 0.1
-cycle = 10
+cycle = 50
 
 data_config = {
     "title": {
         "data": Data(
-            "./asset/Cultural/dataset_keywords.csv", papers_count=number_of_papers
+            "../asset/Cultural/processed_full.csv", papers_count=number_of_papers,
+            label_column="title_label"
         )
     },
     "fulltext": {
         "data": Data(
-            "./asset/Cultural/dataset_keywords.csv",
-            label_csv_file="./asset/Cultural/fulltext_label.csv",
+            "../asset/Cultural/processed_full.csv",
             papers_count=number_of_papers,
+            label_column="fulltext_label",
         )
     }
 }
+
 
 for i in data_config:
     data_config[i]["relevant_papers"] = data_config[i]["data"].data.loc[data_config[i]["data"].data.label == 1].shape[0]
 
 model_configs = {
-    "title_lr": {
-        "data": data_config["title"]["data"],
-        "feature_columns": ["title", "abstract"],
-        "model": LogisticRegression(),
-    },
+    # "title_lr": {
+    #     "data": data_config["title"]["data"],
+    #     "feature_columns": ["title", "abstract"],
+    #     "model": LogisticRegression(),
+    # },
     # "title_lr_keywords": {
     #     "data": data_config["title"]["data"],
     #     "feature_columns": ["title", "abstract", "keywords"],
@@ -56,21 +58,21 @@ model_configs = {
     #     "feature_columns": ["title", "abstract", "keywords"],
     #     "model": MultinomialNB(),
     # },
-    # "fulltext_lr": {
-    #     "data": data_config["fulltext"]["data"],
-    #     "feature_columns": ["title", "abstract"],
-    #     "model": LogisticRegression(),
-    # },
-    # "fulltext_lr_keywords": {
-    #     "data": data_config["fulltext"]["data"],
-    #     "feature_columns": ["title", "abstract", "keywords"],
-    #     "model": LogisticRegression(),
-    # },
-    "fulltext_nb": {
+    "fulltext_lr": {
         "data": data_config["fulltext"]["data"],
         "feature_columns": ["title", "abstract"],
-        "model": MultinomialNB(),
+        "model": LogisticRegression(),
     },
+    "fulltext_lr_keywords": {
+        "data": data_config["fulltext"]["data"],
+        "feature_columns": ["title", "abstract", "keywords"],
+        "model": LogisticRegression(),
+    },
+    # "fulltext_nb": {
+    #     "data": data_config["fulltext"]["data"],
+    #     "feature_columns": ["title", "abstract"],
+    #     "model": MultinomialNB(),
+    # },
     # "fulltext_nb_keywords": {
     #     "data": data_config["fulltext"]["data"],
     #     "feature_columns": ["title", "abstract", "keywords"],

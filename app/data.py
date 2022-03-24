@@ -4,11 +4,15 @@ from sklearn.utils import shuffle
 
 
 class Data:
-    def __init__(self, csv_file, papers_count=None, label_csv_file=None):
+    def __init__(
+        self, csv_file, papers_count=None, label_csv_file=None, label_column=None
+    ):
         self.papers_count = papers_count
         self.data = pd.read_csv(csv_file)
         if label_csv_file:
             self.data["label"] = pd.read_csv(label_csv_file)["label"]
+        if label_column:
+            self.data["label"] = self.data[label_column]
         self._clean_data()
         self._shuffle_data()
         self._cut_data()
@@ -18,7 +22,7 @@ class Data:
         self.profile = ProfileReport(self.data, title="Data Profile Report")
 
     def _clean_data(self):
-        self.data = self.data.dropna()
+        self.data.dropna(subset=["title", "abstract"], inplace=True)
 
     def _shuffle_data(self):
         self.data = shuffle(self.data)
