@@ -39,15 +39,24 @@ class LearningModel:
     def _init_data(self):
         if self.label_column != "label":
             self.data["label"] = self.data[self.label_column]
-        self.data["features"] = ""
-        for f in self.features:
-            self.data["features"] += self.data[f]
+        self.data["features_vectorize"] = self.data["title"] + self.data["abstract"]
+        if "keywords" in self.features:
+            self.data["features"] = (
+                self.data["keywords"].astype(str)
+                + " "
+                + self.data["title"]
+                + self.data["abstract"]
+            )
+        else:
+            self.data["features"] = self.data["title"] + self.data["abstract"]
+
         self.data["training_set"] = 0
         self.data["proba_history"] = [[] for i in range(self.data.shape[0])]
 
         self.vectorize_init()
 
     def generate_matrix(self):
+
         # test_set, training_set = self.vectorize()
         test_set, training_set = self.get_set()
         self.label_set = self.data.loc[self.data.training_set == 1]["label"]
@@ -55,22 +64,27 @@ class LearningModel:
 
     def feature_selection(self, test_set, training_set):
         selector = SelectPercentile(f_classif, percentile=self.percentile)
+        # selector = SelectKBest(chi2, k=self.data.shape[1] - 2)
         selector.fit(training_set, self.label_set)
         self.training_set = selector.transform(training_set).toarray()
         self.test_set = selector.transform(test_set).toarray()
 
     def vectorize_init(self):
-
         vectorizer = TfidfVectorizer(
             sublinear_tf=True,
-            max_df=0.5,
+            max_df=0.7,
+            min_df=0.01,
+            # max_features=1000,
             stop_words="english",
             ngram_range=(1, self.ngram_max),
         )
 
-        self.features_vectorized = vectorizer.fit_transform(self.data["features"])
+        # it should run in each iteration because we're changing vectorization in each iteration
+        self.features_vectorized = vectorizer.fit_transform(
+            self.data["features_vectorize"]
+        )
 
-        self.test_set_vectorized = vectorizer.transform(self.data["features"])
+        self.test_set_vectorized = vectorizer.transform(self.data["features_vectorize"])
 
     def get_set(self):
         row_index = self.data["training_set"].astype("bool")
@@ -106,7 +120,7 @@ class LearningModel:
         self.data = pd.concat([pd.DataFrame(predicted_labels), self.data], axis=1)
 
         self.data["proba_history"] += pd.DataFrame(
-            [[[i]] for i in self.data[0].values.tolist()]
+            [[[i]] for i in self.data[1].values.tolist()]
         )[0]
 
         # for i in range(self.number_of_sd):

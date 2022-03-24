@@ -21,8 +21,9 @@ class ActiveLearningAgent:
         self.sd_threshold = sd_threshold
         self.init_prior_knowledge()
         self.update_training_set_strategy = update_training_set_strategy
-        self.founded_papers_count = []
-        self.total_papers_count = []
+        self.founded_papers_count = [0]
+        self.total_papers_count = [0]
+        self.vectorized_cycle = 0
 
     def init_prior_knowledge(self, positive_papers_count=5, negative_papers_count=5):
         self.learning_model.data.loc[
@@ -37,6 +38,13 @@ class ActiveLearningAgent:
             .index,
             "training_set",
         ] = 1
+
+    def update_training_set_features(self):
+        self.learning_model.data.loc[
+            self.learning_model.data.training_set == 1, "features_vectorize"
+        ] = self.learning_model.data.loc[
+            self.learning_model.data.training_set == 1, "features"
+        ].values
 
     def update_training_set(self):
         if self.update_training_set_strategy == "max_prob":
@@ -54,6 +62,17 @@ class ActiveLearningAgent:
 
         else:
             raise ValueError("update_training_set_strategy error")
+
+        self.update_training_set_features()
+
+        if "keywords" in self.learning_model.features:
+            if (
+                self.founded_papers_count[-1]
+                - self.founded_papers_count[self.vectorized_cycle]
+                > 10
+            ):
+                self.vectorized_cycle = len(self.founded_papers_count) - 1
+                self.learning_model.vectorize_init()
 
     def auto_mix_sd(self):
         if self.check_sd_threshold():
