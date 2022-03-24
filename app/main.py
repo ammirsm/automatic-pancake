@@ -15,7 +15,7 @@ warnings.filterwarnings("ignore")
 
 def start_active_learning(key, config, strategies_result, strategy_key, dirs):
     the_percentile_title = 100
-    the_percentile_fulltext = 20
+    the_percentile_fulltext = 100
     config["number_of_relevant"] = (
         config["data"].data.loc[config["data"].data.label == 1].shape[0]
     )
