@@ -39,16 +39,23 @@ class LearningModel:
     def _init_data(self):
         if self.label_column != "label":
             self.data["label"] = self.data[self.label_column]
-        self.data["features_vectorize"] = self.data["title"] + self.data["abstract"]
+        if "abstract" in self.features:
+            self.data["features_vectorize"] = self.data["title"] + self.data["abstract"]
+        else:
+            self.data["features_vectorize"] = self.data["title"]
+
         if "keywords" in self.features:
             self.data["features"] = (
                 self.data["keywords"].astype(str)
                 + " "
                 + self.data["title"]
+                + " "
                 + self.data["abstract"]
             )
+        elif "abstract" in self.features:
+            self.data["features"] = self.data["title"] + " " + self.data["abstract"]
         else:
-            self.data["features"] = self.data["title"] + self.data["abstract"]
+            self.data["features"] = self.data["title"]
 
         self.data["training_set"] = 0
         self.data["proba_history"] = [[] for i in range(self.data.shape[0])]
@@ -74,7 +81,7 @@ class LearningModel:
             sublinear_tf=True,
             max_df=0.7,
             min_df=0.01,
-            # max_features=1000,
+            max_features=1000,
             stop_words="english",
             ngram_range=(1, self.ngram_max),
         )

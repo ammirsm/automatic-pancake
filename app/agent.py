@@ -71,6 +71,7 @@ class ActiveLearningAgent:
                 - self.founded_papers_count[self.vectorized_cycle]
                 > 10
             ):
+                print("vectorize again")
                 self.vectorized_cycle = len(self.founded_papers_count) - 1
                 self.learning_model.vectorize_init()
 

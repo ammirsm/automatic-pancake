@@ -23,6 +23,9 @@ def start_active_learning(key, config, strategies_result, strategy_key, dirs):
         config["percentile"] = the_percentile_fulltext
     elif len(config["feature_columns"]) == 2:
         config["percentile"] = the_percentile_title
+    else:
+        config["percentile"] = the_percentile_title
+
     config["learning_model"] = LearningModel(
         config["data"],
         feature_columns=config["feature_columns"],
