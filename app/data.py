@@ -9,6 +9,8 @@ class Data:
     ):
         self.papers_count = papers_count
         self.data = pd.read_csv(csv_file)
+        self.data = self.data.fillna("")
+        # self.data = self.data[(self.data["keywords_new"] != "")]
         if label_csv_file:
             self.data["label"] = pd.read_csv(label_csv_file)["label"]
         if label_column:

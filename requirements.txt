@@ -3,3 +3,4 @@ scikit-learn
 numpy
 matplotlib
 pandas_profiling
+impbalace-learn

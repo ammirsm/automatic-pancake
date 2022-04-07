@@ -4,6 +4,7 @@ from sklearn.naive_bayes import MultinomialNB
 
 strategies = [
     ("max_prob", 1),
+    # ("max_prob_with_prioritize_fulltext", 1),
     # ("uncertainty", 1),
     # ("mix_checking_inside", 1),
     # ("mix_checking_inside", 2),
@@ -17,16 +18,18 @@ number_of_iterations = 1
 sd_threshold = 0.1
 cycle = 50
 
+dataset = "Cultural"
+
 data_config = {
     "title": {
         "data": Data(
-            "../asset/Cultural/processed_full.csv", papers_count=number_of_papers,
+            "../asset/" + dataset + "/processed_full_with_new_abstract.csv", papers_count=number_of_papers,
             label_column="title_label"
         )
     },
     "fulltext": {
         "data": Data(
-            "../asset/Cultural/processed_full.csv",
+            "../asset/" + dataset + "/processed_full_with_new_abstract.csv",
             papers_count=number_of_papers,
             label_column="fulltext_label",
         )
@@ -58,16 +61,62 @@ model_configs = {
     #     "feature_columns": ["title", "abstract", "keywords"],
     #     "model": MultinomialNB(),
     # },
-    "fulltext_lr": {
+    # "title_lr_title": {
+    #     "data": data_config["title"]["data"],
+    #     "feature_columns": ["title"],
+    #     "model": LogisticRegression(),
+    # },
+    # "title_lr_with_abstract_over": {
+    #     "data": data_config["title"]["data"],
+    #     "feature_columns": ["title", "abstract"],
+    #     "model": LogisticRegression(),
+    #     "sampler": "RandomOverSampler",
+    #     "tokenizer": "TF-IDF",
+    # },
+    # "title_lr_with_abstract_under": {
+    #     "data": data_config["title"]["data"],
+    #     "feature_columns": ["title", "abstract"],
+    #     "model": LogisticRegression(),
+    #     "sampler": "RandomUnderSampler",
+    #     "tokenizer": "TF-IDF",
+    # },
+    # "title_lr_keywords": {
+    #     "data": data_config["title"]["data"],
+    #     "feature_columns": ["title", "abstract", "keywords"],
+    #     "model": LogisticRegression(),
+    # },
+    # "fulltext_lr_title": {
+    #     "data": data_config["fulltext"]["data"],
+    #     "feature_columns": ["title"],
+    #     "model": LogisticRegression(),
+    # },
+    "fulltext_lr_with_papers": {
+        "data": data_config["fulltext"]["data"],
+        "feature_columns": ["title", "abstract_new"],
+        "model": LogisticRegression(),
+        "sampler": None,
+        "tokenizer": "TF-IDF",
+        "features_for_vectorize": ["title", "abstract_new"],
+        "percentile": 100,
+        "revectorize": False,
+        "prioritize": True,
+    },
+    "fulltext_lr_with_abstract": {
         "data": data_config["fulltext"]["data"],
         "feature_columns": ["title", "abstract"],
         "model": LogisticRegression(),
+        "sampler": None,
+        "tokenizer": "TF-IDF",
+        "features_for_vectorize": ["title", "abstract"],
+        "percentile": 100,
+        "revectorize": False,
+        "prioritize": False,
     },
-    "fulltext_lr_keywords": {
-        "data": data_config["fulltext"]["data"],
-        "feature_columns": ["title", "abstract", "keywords"],
-        "model": LogisticRegression(),
-    },
+    # "fulltext_lr_keywords": {
+    #     "data": data_config["fulltext"]["data"],
+    #     "feature_columns": ["title", "abstract", "keywords"],
+    #     "model": LogisticRegression(),
+    # },
     # "fulltext_nb": {
     #     "data": data_config["fulltext"]["data"],
     #     "feature_columns": ["title", "abstract"],

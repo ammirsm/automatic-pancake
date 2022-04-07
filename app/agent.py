@@ -13,7 +13,9 @@ class ActiveLearningAgent:
         each_cycle=10,
         query_ratio=1,
         sd_threshold=0.1,
+        prioritize=False,
     ):
+        self.prioritize = prioritize
         self.query_ratio = query_ratio
         self.each_cycle = each_cycle
         self.name = name
@@ -49,6 +51,8 @@ class ActiveLearningAgent:
     def update_training_set(self):
         if self.update_training_set_strategy == "max_prob":
             self.max_prob_strategy()
+        elif self.update_training_set_strategy == "max_prob_with_prioritize_fulltext":
+            self.max_prob_with_prioritize_fulltext()
         elif self.update_training_set_strategy == "title":
             self.sort_by_title_strategy()
         elif self.update_training_set_strategy == "uncertainty":
@@ -65,15 +69,15 @@ class ActiveLearningAgent:
 
         self.update_training_set_features()
 
-        if "keywords" in self.learning_model.features:
-            if (
-                self.founded_papers_count[-1]
-                - self.founded_papers_count[self.vectorized_cycle]
-                > 10
-            ):
-                print("vectorize again")
-                self.vectorized_cycle = len(self.founded_papers_count) - 1
-                self.learning_model.vectorize_init()
+        new_founded_papers_count = (
+            self.founded_papers_count[-1]
+            - self.founded_papers_count[self.vectorized_cycle]
+        )
+
+        if self.learning_model.revectorize and new_founded_papers_count > 10:
+            print("vectorize again")
+            self.vectorized_cycle = len(self.founded_papers_count) - 1
+            self.learning_model.vectorize_init()
 
     def auto_mix_sd(self):
         if self.check_sd_threshold():
@@ -136,6 +140,34 @@ class ActiveLearningAgent:
             "training_set",
         ] = 1
 
+    def max_prob_with_prioritize_fulltext(self, max_prob_number=None):
+        if (
+            self.prioritize
+            and self.learning_model.data[
+                (self.learning_model.data.training_set == 0)
+                & (self.learning_model.data.keywords_new != "")
+            ].shape[0]
+            > 0
+        ):
+            self.learning_model.data.loc[
+                self.learning_model.data[
+                    (self.learning_model.data.training_set == 0)
+                    & (self.learning_model.data.keywords_new != "")
+                ]
+                .sort_values(by=[0])
+                .head(self.each_cycle)
+                .index,
+                "training_set",
+            ] = 1
+        else:
+            self.learning_model.data.loc[
+                self.learning_model.data[(self.learning_model.data.training_set == 0)]
+                .sort_values(by=[0])
+                .head(self.each_cycle)
+                .index,
+                "training_set",
+            ] = 1
+
     def check_sd_threshold(self):
         if self.learning_model.sd_counter < 25:
             return False
@@ -189,6 +221,8 @@ class ActiveLearningAgent:
 
             # print('train_model', f'{self.name} - {self.update_training_set_strategy}')
             tic = timeit.default_timer()
+
+            self.learning_model.balance_data()
             self.learning_model.train_model()
             functinon_time["train_model"] += timeit.default_timer() - tic
 

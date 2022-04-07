@@ -14,23 +14,20 @@ warnings.filterwarnings("ignore")
 
 
 def start_active_learning(key, config, strategies_result, strategy_key, dirs):
-    the_percentile_title = 100
-    the_percentile_fulltext = 100
+
     config["number_of_relevant"] = (
         config["data"].data.loc[config["data"].data.label == 1].shape[0]
     )
-    if len(config["feature_columns"]) == 3:
-        config["percentile"] = the_percentile_fulltext
-    elif len(config["feature_columns"]) == 2:
-        config["percentile"] = the_percentile_title
-    else:
-        config["percentile"] = the_percentile_title
 
     config["learning_model"] = LearningModel(
         config["data"],
         feature_columns=config["feature_columns"],
         model=config["model"],
         the_percentile=config["percentile"],
+        sampler=config["sampler"],
+        tokenizer=config["tokenizer"],
+        revectorize=config["revectorize"],
+        features_for_vectorize=config["features_for_vectorize"],
     )
 
     config["agent"] = ActiveLearningAgent(
@@ -39,6 +36,7 @@ def start_active_learning(key, config, strategies_result, strategy_key, dirs):
         each_cycle=cycle,
         update_training_set_strategy=strategy_key.split(" - ")[0],
         query_ratio=int(strategy_key.split(" - ")[1]),
+        prioritize=config["prioritize"],
     )
     config["agent"].start_active_learning()
     config["plot_data"] = config["agent"].plot_data()
