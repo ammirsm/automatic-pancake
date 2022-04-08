@@ -18,18 +18,25 @@ number_of_iterations = 1
 sd_threshold = 0.1
 cycle = 50
 
-dataset = "Cultural"
+dataset = "van_de_Schoot_2017"
 
 data_config = {
-    "title": {
-        "data": Data(
-            "../asset/" + dataset + "/processed_full_with_new_abstract.csv", papers_count=number_of_papers,
-            label_column="title_label"
-        )
-    },
+    # "title": {
+    #     "data": Data(
+    #         "../asset/" + dataset + "/not_processed_title_with_bert.csv", papers_count=number_of_papers,
+    #         label_column="title_label"
+    #     )
+    # },
     "fulltext": {
         "data": Data(
-            "../asset/" + dataset + "/processed_full_with_new_abstract.csv",
+            "../asset/" + dataset + "/not_processed_full.csv",
+            papers_count=number_of_papers,
+            label_column="fulltext_label",
+        )
+    },
+    "fulltext_processed": {
+        "data": Data(
+            "../asset/" + dataset + "/processed_full.csv",
             papers_count=number_of_papers,
             label_column="fulltext_label",
         )
@@ -90,19 +97,42 @@ model_configs = {
     #     "feature_columns": ["title"],
     #     "model": LogisticRegression(),
     # },
-    "fulltext_lr_with_papers": {
-        "data": data_config["fulltext"]["data"],
-        "feature_columns": ["title", "abstract_new"],
-        "model": LogisticRegression(),
-        "sampler": None,
-        "tokenizer": "TF-IDF",
-        "features_for_vectorize": ["title", "abstract_new"],
-        "percentile": 100,
-        "revectorize": False,
-        "prioritize": True,
+    "fulltext_lr_scibert": {
+            "data": data_config["fulltext"]["data"],
+            "feature_columns": ["title", "abstract"],
+            "model": LogisticRegression(),
+            "sampler": None,
+            "tokenizer": "scibert",
+            "features_for_vectorize": ["title", "abstract"],
+            "percentile": 100,
+            "revectorize": False,
+            "prioritize": True,
     },
+    "fulltext_lr_sbert": {
+            "data": data_config["fulltext"]["data"],
+            "feature_columns": ["title", "abstract"],
+            "model": LogisticRegression(),
+            "sampler": None,
+            "tokenizer": "sbert",
+            "features_for_vectorize": ["title", "abstract"],
+            "percentile": 100,
+            "revectorize": False,
+            "prioritize": True,
+    },
+
+    # "fulltext_lr_with_papers": {
+    #     "data": data_config["fulltext"]["data"],
+    #     "feature_columns": ["title", "abstract_new"],
+    #     "model": LogisticRegression(),
+    #     "sampler": None,
+    #     "tokenizer": "TF-IDF",
+    #     "features_for_vectorize": ["title", "abstract_new"],
+    #     "percentile": 100,
+    #     "revectorize": False,
+    #     "prioritize": True,
+    # },
     "fulltext_lr_with_abstract": {
-        "data": data_config["fulltext"]["data"],
+        "data": data_config["fulltext_processed"]["data"],
         "feature_columns": ["title", "abstract"],
         "model": LogisticRegression(),
         "sampler": None,

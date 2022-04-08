@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
 from sklearn.naive_bayes import MultinomialNB
@@ -73,8 +74,12 @@ class LearningModel:
         selector = SelectPercentile(f_classif, percentile=self.percentile)
         # selector = SelectKBest(chi2, k=self.data.shape[1] - 2)
         selector.fit(training_set, self.label_set)
-        self.training_set = selector.transform(training_set).toarray()
-        self.test_set = selector.transform(test_set).toarray()
+        if self.tokenizer in ["sbert", "scibert"]:
+            self.training_set = selector.transform(training_set)
+            self.test_set = selector.transform(test_set)
+        else:
+            self.training_set = selector.transform(training_set).toarray()
+            self.test_set = selector.transform(test_set).toarray()
 
     def balance_data(self):
         balance_data_type = self.sampler
@@ -126,6 +131,8 @@ class LearningModel:
             self.tfidf()
         elif tokenizer == "sbert":
             self.sbert()
+        elif tokenizer == "scibert":
+            self.scibert()
 
     def tfidf(self):
         vectorizer = TfidfVectorizer(
@@ -195,9 +202,70 @@ class LearningModel:
         #   self.data['sd_history_'+str(self.sd_counter)].iloc[i] = np.std(self.data['proba_history'].iloc[i])
 
     def sbert(self):
-        from sentence_transformers import SentenceTransformer
-
-        model = SentenceTransformer("../asset/model/scibert-nli")
         # we haven't tokenized the sentences yet, so we need to do it
-        self.features_vectorized = model.encode(self.data["features_vectorize"])
-        self.test_set_vectorized = model.encode(self.data["features_vectorize"])
+        self.features_vectorized = np.concatenate(
+            (
+                self.calculate_sbert_multiprocessed(self.data["title"]),
+                self.calculate_sbert_multiprocessed(self.data["abstract"]),
+            ),
+            axis=1,
+        )
+        self.test_set_vectorized = self.features_vectorized.copy()
+
+    def calculate_sbert_multiprocessed(self, data):
+        # Define the model
+        model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+
+        # Start the multi-process pool on all available CUDA devices
+        pool = model.start_multi_process_pool()
+
+        # Compute the embeddings using the multi-process pool
+        emd = model.encode_multi_process(data, pool)
+        print("Embeddings computed. Shape:", emd.shape)
+
+        # Optional: Stop the proccesses in the pool
+        model.stop_multi_process_pool(pool)
+        return emd
+
+    def scibert(self):
+        self.features_vectorized = np.concatenate(
+            (
+                self.scibert_helper(self.data["title"]),
+                self.scibert_helper(self.data["abstract"]),
+            ),
+            axis=1,
+        )
+        self.test_set_vectorized = self.features_vectorized.copy()
+
+    def scibert_helper(self, data):
+        import torch
+        from transformers import AutoModel, AutoTokenizer
+
+        # Mean Pooling - Take attention mask into account for correct averaging
+        def mean_pooling(model_output, attention_mask):
+            token_embeddings = model_output[
+                0
+            ]  # First element of model_output contains all token embeddings
+            input_mask_expanded = (
+                attention_mask.unsqueeze(-1).expand(token_embeddings.size()).float()
+            )
+            sum_embeddings = torch.sum(token_embeddings * input_mask_expanded, 1)
+            sum_mask = torch.clamp(input_mask_expanded.sum(1), min=1e-9)
+            return sum_embeddings / sum_mask
+
+        # Load AutoModel from huggingface model repository
+        tokenizer = AutoTokenizer.from_pretrained("gsarti/scibert-nli")
+        model = AutoModel.from_pretrained("gsarti/scibert-nli")
+
+        # Tokenize sentences
+        data = list(data)
+        encoded_input = tokenizer(
+            data, padding=True, truncation=True, max_length=128, return_tensors="pt"
+        )
+
+        # Compute token embeddings
+        with torch.no_grad():
+            model_output = model(**encoded_input)
+
+        # Perform pooling. In this case, mean pooling
+        return np.array(mean_pooling(model_output, encoded_input["attention_mask"]))
