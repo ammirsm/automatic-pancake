@@ -152,26 +152,6 @@ class LearningModel:
         row_index = self.data["training_set"].astype("bool")
         return self.test_set_vectorized, (self.features_vectorized)[row_index]
 
-    # def vectorize(self):
-    #     start = timeit.default_timer()
-
-    #     vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
-    #                                  stop_words='english', ngram_range=(1, self.ngram_max))
-    #     stop = timeit.default_timer()
-    #     print('Time: TfidfVectorizer ', stop - start)
-    #     start = timeit.default_timer()
-
-    #     training_set = vectorizer.fit_transform(self.data.loc[self.data.training_set == 1]['features'])
-    #     stop = timeit.default_timer()
-    #     print('Time: vectorizer.fit_transform ', stop - start)
-    #     start = timeit.default_timer()
-
-    #     test_set = vectorizer.transform(self.data['features'])
-    #     stop = timeit.default_timer()
-    #     print('Time: vectorizer.transform ', stop - start)
-
-    #     return test_set, training_set
-
     def train_model(self):
         self.model.fit(self.training_set, self.label_set)
         predicted_labels = self.model.predict_proba(self.test_set)
@@ -185,21 +165,11 @@ class LearningModel:
             [[[i]] for i in self.data[1].values.tolist()]
         )[0]
 
-        # for i in range(self.number_of_sd):
-        #   if i == 0:
-        #     continue
-        #   self.data['sd_history_'+str(i - 1)] = self.data['sd_history_'+str(i)]
-
         self.data["sd_history_" + str(self.sd_counter)] = self.data[
             "proba_history"
         ].apply(lambda x: np.std(x))
-        # delete_header = 'sd_history_' + str(self.sd_counter - self.number_of_sd)
-        # if delete_header in list(self.data.columns):
-        #   del self.data[delete_header]
 
         self.sd_counter += 1
-        # for i in range(self.data.shape[0]):
-        #   self.data['sd_history_'+str(self.sd_counter)].iloc[i] = np.std(self.data['proba_history'].iloc[i])
 
     def sbert(self):
         # we haven't tokenized the sentences yet, so we need to do it
