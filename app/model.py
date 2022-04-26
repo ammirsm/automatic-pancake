@@ -214,7 +214,8 @@ class LearningModel:
 
     def calculate_sbert_multiprocessed(self, data):
         # Define the model
-        model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+        # model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
+        model = SentenceTransformer("sentence-transformers/stsb-distilbert-base")
 
         # Start the multi-process pool on all available CUDA devices
         pool = model.start_multi_process_pool()

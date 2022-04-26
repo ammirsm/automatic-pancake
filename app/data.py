@@ -7,14 +7,21 @@ class Data:
     def __init__(
         self, csv_file, papers_count=None, label_csv_file=None, label_column=None
     ):
+        self.csv_file = csv_file
         self.papers_count = papers_count
-        self.data = pd.read_csv(csv_file)
+        self.label_column = label_column
+        self.label_csv_file = label_csv_file
+
+        self.init_data()
+
+    def init_data(self):
+        self.data = pd.read_csv(self.csv_file)
         self.data = self.data.fillna("")
-        # self.data = self.data[(self.data["keywords_new"] != "")]
-        if label_csv_file:
-            self.data["label"] = pd.read_csv(label_csv_file)["label"]
-        if label_column:
-            self.data["label"] = self.data[label_column]
+        self.data = self.data[(self.data["keywords_new"] != "")]
+        if self.label_csv_file:
+            self.data["label"] = pd.read_csv(self.label_csv_file)["label"]
+        if self.label_column:
+            self.data["label"] = self.data[self.label_column]
         self._clean_data()
         self._shuffle_data()
         self._cut_data()

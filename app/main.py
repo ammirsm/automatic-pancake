@@ -14,6 +14,7 @@ warnings.filterwarnings("ignore")
 
 
 def start_active_learning(key, config, strategies_result, strategy_key, dirs):
+    config["data"].init_data()
 
     config["number_of_relevant"] = (
         config["data"].data.loc[config["data"].data.label == 1].shape[0]
