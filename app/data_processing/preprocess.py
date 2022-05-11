@@ -12,23 +12,11 @@ from nltk.stem.snowball import SnowballStemmer
 from app.import_export import import_data
 
 
-def nltk_init():
-    try:
-        _create_unverified_https_context = ssl._create_unverified_context
-    except AttributeError:
-        pass
-    else:
-        ssl._create_default_https_context = _create_unverified_https_context
-    np.random.seed(2018)
-
-    nltk.download("wordnet")
-    nltk.download("omw-1.4")
-
-
 class PreprocessBase:
     def __init__(self, data_path):
         self.nlp_spacy = None
         self.stemmer = None
+        self.stop_words = None
         self.data = import_data(data_path)
         self.data = pd.DataFrame(self.data)
 
@@ -41,14 +29,33 @@ class PreprocessBase:
     def init_stemmer(self):
         self.stemmer = SnowballStemmer("english")
 
+    def init_stop_words(self):
+        from app.data_processing.stopwords import ScientificStopWords
+
+        self.stop_words = ScientificStopWords()
+        self.stop_words = self.stop_words.get_stop_words()
+
+    def nltk_init(self):
+        try:
+            _create_unverified_https_context = ssl._create_unverified_context
+        except AttributeError:
+            pass
+        else:
+            ssl._create_default_https_context = _create_unverified_https_context
+        np.random.seed(2018)
+
+        nltk.download("wordnet")
+        nltk.download("omw-1.4")
+
 
 class PreprocessTFIDF(PreprocessBase):
     max_token_length = 3
 
     def __init__(self, data_path):
         super().__init__(data_path)
-        nltk_init()
+        self.nltk_init()
         self.init_spacy()
+        self.init_stop_words()
 
     def process(self):
         self.data = self.data.fillna("", inplace=True)
@@ -76,7 +83,7 @@ class PreprocessTFIDF(PreprocessBase):
         result = []
         for token in gensim.utils.simple_preprocess(text):
             if (
-                token not in gensim.parsing.preprocessing.STOPWORDS
+                token not in self.stop_words
                 and len(token) > self.get_max_token_length()
             ):
                 result.append(self.stemming(token))
