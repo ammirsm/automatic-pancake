@@ -2,25 +2,22 @@ import pandas as pd
 from pandas_profiling import ProfileReport
 from sklearn.utils import shuffle
 
+from app.import_export import import_data
+
 
 class Data:
-    def __init__(
-        self, csv_file, papers_count=None, label_csv_file=None, label_column=None
-    ):
-        self.csv_file = csv_file
+    def __init__(self, pickle_file, label_column, features_columns, papers_count=None):
+        self.pickle_file = pickle_file
         self.papers_count = papers_count
         self.label_column = label_column
-        self.label_csv_file = label_csv_file
+        self.features_columns = features_columns
 
         self.init_data()
 
     def init_data(self):
-        self.data = pd.read_csv(self.csv_file)
+        self.data = pd.DataFrame(import_data(self.pickle_file))
         self.data = self.data.fillna("")
-        if self.label_csv_file:
-            self.data["label"] = pd.read_csv(self.label_csv_file)["label"]
-        if self.label_column:
-            self.data["label"] = self.data[self.label_column]
+        self.data["label"] = self.data[self.label_column]
         self._clean_data()
         self._shuffle_data()
         self._cut_data()
@@ -30,7 +27,7 @@ class Data:
         self.profile = ProfileReport(self.data, title="Data Profile Report")
 
     def _clean_data(self):
-        self.data.dropna(subset=["title", "abstract"], inplace=True)
+        self.data.dropna(subset=self.features_columns, inplace=True)
 
     def _shuffle_data(self):
         self.data = shuffle(self.data)

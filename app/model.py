@@ -9,7 +9,6 @@ class LearningModel:
     def __init__(
         self,
         data,
-        feature_columns,
         label_column="label",
         ngram_max=1,
         model=MultinomialNB(),
@@ -18,10 +17,8 @@ class LearningModel:
         sampler=None,
         tokenizer="TF-IDF",
         revectorize=False,
-        features_for_vectorize=None,
     ):
         self.percentile = the_percentile
-        self.features = feature_columns
         self.label_column = label_column
         self.data = data.data.copy()
         self.ngram_max = ngram_max
@@ -30,7 +27,8 @@ class LearningModel:
         self.sampler = sampler
         self.tokenizer = tokenizer
         self.revectorize = revectorize
-        self.features_for_vectorize = features_for_vectorize
+        self.features = data.features_columns
+        self.features_for_vectorize = data.features_columns
         self._init_data()
         # print(f"number of paper is : {len(self.data)}")
 
@@ -44,9 +42,6 @@ class LearningModel:
         self.data["training_set"] = 0
 
     def _init_data(self):
-        if self.label_column != "label":
-            self.data["label"] = self.data[self.label_column]
-
         self.data["features_vectorize"] = ""
         for i in self.features_for_vectorize:
             self.data["features_vectorize"] = (

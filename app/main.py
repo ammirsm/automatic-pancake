@@ -22,13 +22,11 @@ def start_active_learning(key, config, strategies_result, strategy_key, dirs):
 
     config["learning_model"] = LearningModel(
         config["data"],
-        feature_columns=config["feature_columns"],
         model=config["model"],
         the_percentile=config["percentile"],
         sampler=config["sampler"],
         tokenizer=config["tokenizer"],
         revectorize=config["revectorize"],
-        features_for_vectorize=config["features_for_vectorize"],
     )
 
     config["agent"] = ActiveLearningAgent(
