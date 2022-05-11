@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
 from sklearn.naive_bayes import MultinomialNB
@@ -170,33 +169,6 @@ class LearningModel:
         ].apply(lambda x: np.std(x))
 
         self.sd_counter += 1
-
-    def sbert(self):
-        # we haven't tokenized the sentences yet, so we need to do it
-        self.features_vectorized = np.concatenate(
-            (
-                self.calculate_sbert_multiprocessed(self.data["title"]),
-                self.calculate_sbert_multiprocessed(self.data["abstract"]),
-            ),
-            axis=1,
-        )
-        self.test_set_vectorized = self.features_vectorized.copy()
-
-    def calculate_sbert_multiprocessed(self, data):
-        # Define the model
-        # model = SentenceTransformer("paraphrase-MiniLM-L6-v2")
-        model = SentenceTransformer("sentence-transformers/stsb-distilbert-base")
-
-        # Start the multi-process pool on all available CUDA devices
-        pool = model.start_multi_process_pool()
-
-        # Compute the embeddings using the multi-process pool
-        emd = model.encode_multi_process(data, pool)
-        print("Embeddings computed. Shape:", emd.shape)
-
-        # Optional: Stop the proccesses in the pool
-        model.stop_multi_process_pool(pool)
-        return emd
 
     def scibert(self):
         self.features_vectorized = np.concatenate(
