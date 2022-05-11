@@ -17,7 +17,6 @@ class Data:
     def init_data(self):
         self.data = pd.read_csv(self.csv_file)
         self.data = self.data.fillna("")
-        self.data = self.data[(self.data["keywords_new"] != "")]
         if self.label_csv_file:
             self.data["label"] = pd.read_csv(self.label_csv_file)["label"]
         if self.label_column:
