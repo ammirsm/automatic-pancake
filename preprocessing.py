@@ -5,6 +5,7 @@ import nltk
 import numpy as np
 import pandas as pd
 import syntok.segmenter as segmenter
+from crossref.restful import Works
 from nltk.stem import WordNetLemmatizer
 from sentence_transformers import SentenceTransformer
 
@@ -198,3 +199,30 @@ def preprocess_data(df, column_name):
     df[column_name] = df[column_name].apply(preprocess_pdf_text)
     df[column_name] = df[column_name].apply(preprocess_semantic_text)
     # df[column_name] = df[column_name].apply(preprocess)
+
+
+def langdetect(text):
+    from langdetect import detect
+
+    return detect(text)
+
+
+def langdetect_data(df, column_name):
+    df["lang"] = df[column_name].apply(langdetect)
+
+
+works = Works()
+
+
+def get_abstract_from_crossref(doi):
+    print(doi)
+    if not doi:
+        return ""
+    global works
+    data = works.doi(doi)
+    if not data:
+        return ""
+    if "abstract" in data:
+        return data["abstract"]
+    else:
+        return ""
