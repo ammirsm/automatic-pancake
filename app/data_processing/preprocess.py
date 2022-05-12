@@ -9,7 +9,7 @@ from langdetect import detect
 from nltk.stem import WordNetLemmatizer
 from nltk.stem.snowball import SnowballStemmer
 
-from app.import_export import import_data
+from app.import_export import export_data, import_data
 
 
 class PreprocessBase:
@@ -50,19 +50,104 @@ class PreprocessBase:
 
 class PreprocessTFIDF(PreprocessBase):
     max_token_length = 3
+    report_obj = {}
 
     def __init__(self, data_path):
         super().__init__(data_path)
         self.nltk_init()
         self.init_spacy()
         self.init_stop_words()
+        self.init_stemmer()
 
     def process(self):
-        self.data = self.data.fillna("", inplace=True)
+        self.data.fillna("", inplace=True)
 
-        pass
+        # merge titles
+        (
+            self.report_obj["ris_filled_title"],
+            self.report_obj["crossref_filled_title"],
+        ) = self._merge_two_columns("ris-title", "crossref-name", "title")
+        self._lower_and_remove_punctuation("title")
 
-    def stemming(self, text):
+        # merge abstracts
+        (
+            self.report_obj["ris_filled_abstract"],
+            self.report_obj["crossref_filled_abstract"],
+        ) = self._merge_two_columns("ris-abstract", "crossref-abstract", "abstract")
+        self._lower_and_remove_punctuation("abstract")
+
+        # create processed columns
+        self._preprocess_data_columns(
+            {
+                "title": "processed_title",
+                "abstract": "processed_abstract",
+                "endnote-pdf_text": "processed_endnote_pdf_text",
+                "pdf_manual-pdf_text": "processed_pdf_manual_pdf_text",
+            }
+        )
+
+        self.data["processed_metadata"] = (
+            self.data["title"] + " " + self.data["abstract"]
+        )
+
+        # create language column based on title and abstract
+        self._language_detection("processed_metadata", "language")
+
+    def export(self, output_path):
+        export_data(self.data, output_path)
+
+    def report(self):
+        """
+        update report the dataframe
+        """
+        report = {
+            "total_papers": len(self.data),
+            "total_paper_english": len(self.data[self.data["language"] == "en"]),
+            "duplicate_papers": len(self.data[self.data["is_duplicate"] == 1]),
+            "fulltext_accepted": len(self.data[self.data["fulltext_label"] == 1]),
+            "title_accepted": len(self.data[self.data["title_label"] == 1]),
+            "libkey_founded": len(
+                self.data[
+                    (self.data["libkey-fullTextFile"] != "")
+                    | (self.data["libkey-openAccess"] != "")
+                ]
+            ),
+            "libkey_open_access": len(self.data[self.data["libkey-openAccess"]]),
+            "libkey_fulltext_available": len(
+                self.data[self.data["libkey-fullTextFile"] != ""]
+            ),
+            "crossref_founded": len(self.data[self.data["crossref-response"] != ""]),
+            "endnote_fulltext_found": len(self.data["endnote-pdf_text"] != ""),
+            "fultext_accepted_papers": len(self.data["pdf_manual-pdf_text"] != ""),
+        }
+        self.report_obj = {**self.report_obj, **report}
+
+    def _merge_two_columns(self, column_1, column_2, target_column, empty_value=""):
+        self.data[target_column] = empty_value
+        filled_with_column_1 = 0
+        filled_with_column_2 = 0
+        for index, row in self.data.iterrows():
+            if row[column_1] != empty_value:
+                self.data.loc[index, target_column] = row[column_1]
+                filled_with_column_1 += 1
+            elif row[column_2] != empty_value:
+                self.data.loc[index, target_column] = row[column_2]
+                filled_with_column_2 += 1
+        return filled_with_column_1, filled_with_column_2
+
+    def _lower_and_remove_punctuation(self, target_column):
+        # lower
+        self.data[target_column] = self.data[target_column].str.lower()
+        # remove spaces
+        self.data[target_column] = self.data[target_column].str.strip()
+        # remove punctuation
+        self.data[target_column] = self.data[target_column].str.replace(r"[^\w\s]", "")
+        # remove tags
+        self.data[target_column] = self.data[target_column].str.replace(
+            "<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});", ""
+        )
+
+    def _stemming(self, text):
         """
         lemmatize and stemming the text for the dataframe and return the lemmatized text
         It will use the WordNetLemmatizer and SnowballStemmer from nltk
@@ -72,7 +157,7 @@ class PreprocessTFIDF(PreprocessBase):
         """
         return self.stemmer.stem(WordNetLemmatizer().lemmatize(text, pos="v"))
 
-    def preprocess(self, text):
+    def _preprocess(self, text):
         """
         preprocess the text for the dataframe
         check if the text is stop word or not and if the token length is greater than the max token length
@@ -86,10 +171,10 @@ class PreprocessTFIDF(PreprocessBase):
                 token not in self.stop_words
                 and len(token) > self.get_max_token_length()
             ):
-                result.append(self.stemming(token))
+                result.append(self._stemming(token))
         return " ".join(result)
 
-    def preprocess_data_columns(self, column_names):
+    def _preprocess_data_columns(self, column_names):
         """
         preprocess data columns in the dataframe
         :param column_names: dictionary of the column names and their target column names
@@ -97,10 +182,16 @@ class PreprocessTFIDF(PreprocessBase):
         sample column_names = {'title': 'title_preprocessed', 'description': 'description_preprocessed'}
         """
         for read, write in column_names.items():
-            self.data[write] = self.data[read].apply(self.preprocess)
+            self.data[write] = self.data[read]
+            self._lower_and_remove_punctuation(write)
+            self.data[write] = self.data[write].apply(self._preprocess)
+            self.data[write] = self.data[write].apply(self._preprocess)
+            self.data[write] = self.data[write].apply(self._preprocess_semantic_text)
+            self.data[write] = self.data[write].apply(self._convert_to_unicode)
+
         return self.data
 
-    def convert_to_unicode(self, text):
+    def _convert_to_unicode(self, text):
         """Converts `text` to Unicode (if it's not already), assuming utf-8 input."""
         if isinstance(text, str):
             return text
@@ -109,7 +200,7 @@ class PreprocessTFIDF(PreprocessBase):
         else:
             raise ValueError("Unsupported string type: %s" % (type(text)))
 
-    def preprocess_semantic_text(self, text):
+    def _preprocess_semantic_text(self, text):
         """
         preprocess the text for the dataframe with spacy and remove unrelated tokens
         This will use the spacy library to preprocess the text and remove emails and urls and digits and currencies
@@ -134,20 +225,20 @@ class PreprocessTFIDF(PreprocessBase):
                 doc_new.append(token.norm_)
         return " ".join(doc_new)
 
-    def langdetect_helper(self, text):
+    def _langdetect_helper(self, text):
         """
         detect the language of the text
         """
         return detect(text)
 
-    def language_detection(self, target_column, language_column_name):
+    def _language_detection(self, target_column, language_column_name):
         """
         detect the language of the text in the target column and add the language to the language column
         :param target_column: the target column to detect the language
         :param language_column_name: the name of the language column
         """
         self.data[language_column_name] = self.data[target_column].apply(
-            self.langdetect
+            self._langdetect_helper
         )
 
     def set_max_token_length(self, token_length):
