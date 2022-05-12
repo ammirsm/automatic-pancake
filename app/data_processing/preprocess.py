@@ -87,11 +87,13 @@ class PreprocessTFIDF(PreprocessBase):
         )
 
         self.data["processed_metadata"] = (
-            self.data["title"] + " " + self.data["abstract"]
+            self.data["processed_title"] + " " + self.data["processed_abstract"]
         )
 
+        self.data["meta_data"] = self.data["title"] + " " + self.data["abstract"]
+
         # create language column based on title and abstract
-        self._language_detection("processed_metadata", "language")
+        self._language_detection("meta_data", "language")
 
     def export(self, output_path):
         export_data(self.data, output_path)
@@ -117,8 +119,12 @@ class PreprocessTFIDF(PreprocessBase):
                 self.data[self.data["libkey-fullTextFile"] != ""]
             ),
             "crossref_founded": len(self.data[self.data["crossref-response"] != ""]),
-            "endnote_fulltext_found": len(self.data["endnote-pdf_text"] != ""),
-            "fultext_accepted_papers": len(self.data["pdf_manual-pdf_text"] != ""),
+            "endnote_fulltext_found": len(
+                self.data[self.data["processed_pdf_manual_pdf_text"] != ""]
+            ),
+            "fultext_accepted_papers": len(
+                self.data[self.data["processed_endnote_pdf_text"] != ""]
+            ),
         }
         self.report_obj = {**self.report_obj, **report}
 
@@ -183,11 +189,11 @@ class PreprocessTFIDF(PreprocessBase):
         """
         for read, write in column_names.items():
             self.data[write] = self.data[read]
+            self.data[write] = self.data[write].apply(self._convert_to_unicode)
+            self.data[write] = self.data[write].apply(self._preprocess_semantic_text)
             self._lower_and_remove_punctuation(write)
             self.data[write] = self.data[write].apply(self._preprocess)
             self.data[write] = self.data[write].apply(self._preprocess)
-            self.data[write] = self.data[write].apply(self._preprocess_semantic_text)
-            self.data[write] = self.data[write].apply(self._convert_to_unicode)
 
         return self.data
 
@@ -229,6 +235,8 @@ class PreprocessTFIDF(PreprocessBase):
         """
         detect the language of the text
         """
+        if not text or text.strip() == "":
+            return ""
         return detect(text)
 
     def _language_detection(self, target_column, language_column_name):
