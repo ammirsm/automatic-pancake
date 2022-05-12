@@ -1,6 +1,9 @@
 import gensim
 
-from app.configs import stop_words_path
+stop_words_path = [
+    "./asset/stopwords/scientificstopwords_en.txt",
+    "./asset/stopwords/en.txt",
+]
 
 
 class ScientificStopWords:

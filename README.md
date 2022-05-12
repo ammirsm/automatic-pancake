@@ -7,6 +7,10 @@ $ pip install -r requirements.txt
 $ pre-commit install
 ```
 
+## Download stopwords from the repository
+
+
+
 
 ## TODO LIST
 [ ] Preprocessing of the data files cleaning
