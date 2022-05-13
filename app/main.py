@@ -1,77 +1,69 @@
 import os
-import timeit
 import warnings
 from datetime import datetime
 
 from agent import ActiveLearningAgent
-from configs import cycle, model_configs, number_of_iterations, result, strategies
+from configs import cycle, full_configs, number_of_iterations, result
 from import_export import export_data
 from model import LearningModel
-
-from app.draw_utils import draw_helper
 
 warnings.filterwarnings("ignore")
 
 
-def start_active_learning(key, config, strategies_result, strategy_key, dirs):
-    config["data"].init_data()
+def export_config(dirs, name):
+    path = result + "/".join(dirs)
+    os.makedirs(path, exist_ok=True)
+    export_data(config, f"{path}/{name}.pickle")
 
-    config["number_of_relevant"] = (
-        config["data"].data.loc[config["data"].data.label == 1].shape[0]
-    )
 
-    config["learning_model"] = LearningModel(
-        config["data"],
+def run(config, config_pointer):
+    config_pointer["learning_model"] = LearningModel(
+        dataset["data"],
         model=config["model"],
         the_percentile=config["percentile"],
         sampler=config["sampler"],
         tokenizer=config["tokenizer"],
         revectorize=config["revectorize"],
     )
-
-    config["agent"] = ActiveLearningAgent(
+    config_pointer["agent"] = ActiveLearningAgent(
         learning_model=config["learning_model"],
-        name=key,
+        name=name,
         each_cycle=cycle,
-        update_training_set_strategy=strategy_key.split(" - ")[0],
-        query_ratio=int(strategy_key.split(" - ")[1]),
+        update_training_set_strategy=strategy_name,
+        query_ratio=strategy["step"],
         prioritize=config["prioritize"],
     )
-    config["agent"].start_active_learning()
-    config["plot_data"] = config["agent"].plot_data()
 
-    path = result + "/".join(dirs)
-    os.makedirs(path, exist_ok=True)
-    export_data(config, f"{path}/{key}.pickle")
-    config["learning_model"] = None
-    config["agent"] = None
-    strategies_result[strategy_key].append(model_configs)
-    return path
+    config["agent"].start_active_learning()
+    config_pointer["plot_data"] = config["agent"].plot_data()
 
 
 if __name__ == "__main__":
-    strategies_result = {}
+    main_directory_name = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
 
-    first = timeit.default_timer()
-    counter = 0
-    processes = []
-    dirs = [None] * 3
+    for dataset_name, dataset in full_configs.items():
+        for iteration in range(number_of_iterations):
+            dataset["data"].init_data()
+            for strategy_name, strategy in dataset["strategies"].items():
+                for config_name, config in strategy["configs"].items():
+                    name = f"{dataset_name} - {config_name} - {strategy_name} - {strategy['step']}"
+                    config_pointer = full_configs[dataset_name]["strategies"][
+                        strategy_name
+                    ]["configs"][config_name]
 
-    now = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")  # current date and time
-    dirs[0] = now
-    for strategy in strategies:
-        strategy_key = str(strategy[0]) + " - " + str(strategy[1])
-        dirs[1] = strategy_key
-        strategies_result[strategy_key] = []
-        for i in range(number_of_iterations):
-            dirs[2] = str(i)
-            for key, config in model_configs.items():
-                print(counter)
-                path = start_active_learning(
-                    key, config, strategies_result, strategy_key, dirs.copy()
-                )
-                counter += 1
+                    run(config, config_pointer)
 
-    second = timeit.default_timer()
-    draw_helper(os.path.join(result, dirs[0]))
-    print("Total Time : ", second - first)
+                    export_config(
+                        [
+                            main_directory_name,
+                            dataset_name,
+                            str(iteration),
+                            strategy_name,
+                        ],
+                        config_name,
+                    )
+
+                    config_pointer["learning_model"] = None  # to save memory
+                    config_pointer["agent"] = None  # to save memory
+
+                    print(f"{name} is done")
