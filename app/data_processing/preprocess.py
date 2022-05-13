@@ -18,6 +18,7 @@ class PreprocessBase:
         self.stemmer = None
         self.stop_words = None
         self.data = import_data(data_path)
+        # self.data = self.data[:200]
         self.data = pd.DataFrame(self.data)
 
     def init_spacy(self):
@@ -114,7 +115,12 @@ class PreprocessTFIDF(PreprocessBase):
                     | (self.data["libkey-openAccess"] != "")
                 ]
             ),
-            "libkey_open_access": len(self.data[self.data["libkey-openAccess"]]),
+            "libkey_open_access": len(
+                self.data[
+                    (self.data["libkey-openAccess"] != "")
+                    & (self.data["libkey-openAccess"])
+                ]
+            ),
             "libkey_fulltext_available": len(
                 self.data[self.data["libkey-fullTextFile"] != ""]
             ),
