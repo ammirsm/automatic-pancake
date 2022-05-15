@@ -27,7 +27,7 @@ class ActiveLearningAgent:
         self.total_papers_count = [0]
         self.vectorized_cycle = 0
 
-    def init_prior_knowledge(self, positive_papers_count=5, negative_papers_count=5):
+    def init_prior_knowledge(self, positive_papers_count=1, negative_papers_count=1):
         self.learning_model.data.loc[
             self.learning_model.data[(self.learning_model.data.label == 1)]
             .head(positive_papers_count)
