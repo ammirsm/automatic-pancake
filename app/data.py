@@ -6,18 +6,26 @@ from app.import_export import import_data
 
 
 class Data:
-    def __init__(self, pickle_file, label_column, features_columns, papers_count=None):
+    def __init__(
+        self,
+        pickle_file,
+        label_column,
+        features_columns,
+        filter_data="all",
+        papers_count=None,
+    ):
         self.pickle_file = pickle_file
         self.papers_count = papers_count
         self.label_column = label_column
         self.features_columns = features_columns
-
+        self.pure_data = import_data(self.pickle_file)
         self.init_data()
 
     def init_data(self):
-        self.data = pd.DataFrame(import_data(self.pickle_file))
+        self.data = pd.DataFrame(self.pure_data)
         self.data = self.data.fillna("")
         self.data["label"] = self.data[self.label_column]
+        self.number_of_relavant = self.data[self.data["label"] == 1].shape[0]
         self._clean_data()
         self._shuffle_data()
         self._cut_data()
