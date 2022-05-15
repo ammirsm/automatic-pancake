@@ -2,7 +2,7 @@ from data import Data
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
 
-strategies = [
+query_strategies = [
     ("max_prob", 1),
     # ("max_prob_with_prioritize_fulltext", 1),
     # ("uncertainty", 1),
@@ -14,130 +14,51 @@ strategies = [
 ]
 
 number_of_papers = None
-number_of_iterations = 1
+number_of_iterations = 5
 sd_threshold = 0.1
-cycle = 50
+cycle = 20
 
-dataset = "van_de_Schoot_2017"
+dataset = "Cultural"
 
 data_config = {
-    # "title": {
-    #     "data": Data(
-    #         "../asset/" + dataset + "/not_processed_title_with_bert.csv", papers_count=number_of_papers,
-    #         label_column="title_label"
-    #     )
-    # },
-    "fulltext": {
+    "vande": {
         "data": Data(
-            "../asset/" + dataset + "/not_processed_full.csv",
+            "../asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
-            label_column="fulltext_label",
+            label_column="title_label",
+            features_columns=["title", "abstract"]
         )
     },
-    "fulltext_processed": {
+    "vande_2": {
         "data": Data(
-            "../asset/" + dataset + "/processed_full.csv",
+            "../asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
-            label_column="fulltext_label",
+            label_column="title_label",
+            features_columns=["processed_title", "processed_abstract", "processed_endnote_pdf_text"]
         )
-    }
+    },
 }
-
 
 for i in data_config:
     data_config[i]["relevant_papers"] = data_config[i]["data"].data.loc[data_config[i]["data"].data.label == 1].shape[0]
 
 model_configs = {
-    # "title_lr": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title", "abstract"],
-    #     "model": LogisticRegression(),
-    # },
-    # "title_lr_keywords": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title", "abstract", "keywords"],
-    #     "model": LogisticRegression(),
-    # },
-    # "title_nb": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title", "abstract"],
-    #     "model": MultinomialNB(),
-    # },
-    # "title_nb_keywords": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title", "abstract", "keywords"],
-    #     "model": MultinomialNB(),
-    # },
-    # "title_lr_title": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title"],
-    #     "model": LogisticRegression(),
-    # },
-    # "title_lr_with_abstract_over": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title", "abstract"],
-    #     "model": LogisticRegression(),
-    #     "sampler": "RandomOverSampler",
-    #     "tokenizer": "TF-IDF",
-    # },
-    # "title_lr_with_abstract_under": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title", "abstract"],
-    #     "model": LogisticRegression(),
-    #     "sampler": "RandomUnderSampler",
-    #     "tokenizer": "TF-IDF",
-    # },
-    # "title_lr_keywords": {
-    #     "data": data_config["title"]["data"],
-    #     "feature_columns": ["title", "abstract", "keywords"],
-    #     "model": LogisticRegression(),
-    # },
-    # "fulltext_lr_title": {
-    #     "data": data_config["fulltext"]["data"],
-    #     "feature_columns": ["title"],
-    #     "model": LogisticRegression(),
-    # },
-    "fulltext_lr_scibert": {
-            "data": data_config["fulltext"]["data"],
-            "feature_columns": ["title", "abstract"],
-            "model": LogisticRegression(),
-            "sampler": None,
-            "tokenizer": "scibert",
-            "features_for_vectorize": ["title", "abstract"],
-            "percentile": 100,
-            "revectorize": False,
-            "prioritize": True,
-    },
-    "fulltext_lr_sbert": {
-            "data": data_config["fulltext"]["data"],
-            "feature_columns": ["title", "abstract"],
-            "model": LogisticRegression(),
-            "sampler": None,
-            "tokenizer": "sbert",
-            "features_for_vectorize": ["title", "abstract"],
-            "percentile": 100,
-            "revectorize": False,
-            "prioritize": True,
-    },
-
-    # "fulltext_lr_with_papers": {
-    #     "data": data_config["fulltext"]["data"],
-    #     "feature_columns": ["title", "abstract_new"],
-    #     "model": LogisticRegression(),
-    #     "sampler": None,
-    #     "tokenizer": "TF-IDF",
-    #     "features_for_vectorize": ["title", "abstract_new"],
-    #     "percentile": 100,
-    #     "revectorize": False,
-    #     "prioritize": True,
-    # },
     "fulltext_lr_with_abstract": {
-        "data": data_config["fulltext_processed"]["data"],
-        "feature_columns": ["title", "abstract"],
+        "label": "fulltext_label",
+        "data": data_config["vande"]["data"],
         "model": LogisticRegression(),
         "sampler": None,
         "tokenizer": "TF-IDF",
-        "features_for_vectorize": ["title", "abstract"],
+        "percentile": 100,
+        "revectorize": False,
+        "prioritize": False,
+    },
+    "fulltext_lr_with_google": {
+        "label": "title_label",
+        "data": data_config["vande_2"]["data"],
+        "model": MultinomialNB(),
+        "sampler": None,
+        "tokenizer": "TF-IDF",
         "percentile": 100,
         "revectorize": False,
         "prioritize": False,
@@ -162,3 +83,51 @@ model_configs = {
 output_dir = 'output'
 
 result = 'result/'
+
+feature_configs = {
+                "title_abstract": {
+                    "label": "fulltext_label",
+                    "model": LogisticRegression(),
+                    "sampler": None,
+                    "tokenizer": "TF-IDF",
+                    "tokenizer_max_df": 0.9,
+                    "tokenizer_min_df": 0.1,
+                    "percentile": 100,
+                    "prioritize": False,
+                    "revectorize": False,
+                    "feature_before_vectorize": ["title", "abstract"],
+                    "feature_after_vectorize": ["title", "abstract"],
+                },
+                "title_abstract_processed": {
+                    "label": "fulltext_label",
+                    "model": LogisticRegression(),
+                    "sampler": None,
+                    "tokenizer": "TF-IDF",
+                    "tokenizer_max_df": 0.9,
+                    "tokenizer_min_df": 0.1,
+                    "percentile": 100,
+                    "prioritize": False,
+                    "revectorize": False,
+                    "feature_before_vectorize": ["processed_title", "processed_abstract", "processed_endnote_pdf_text"],
+                    "feature_after_vectorize": ["processed_title", "processed_abstract", "processed_endnote_pdf_text"],
+                },
+            }
+
+full_configs = {
+    "vande": {
+        "data": Data(
+            "../asset/pickle_datasets/test_vande_200_papers.pickle",
+            papers_count=number_of_papers,
+            label_column="title_label",
+            features_columns=["title", "abstract"],
+            filter_data="all",
+        ),
+        "strategies": {"max_prob": {
+            "step": 1,
+            "configs": feature_configs
+        }, "uncertainty": {
+            "step": 1,
+            "configs": feature_configs
+        }},
+    },
+}
