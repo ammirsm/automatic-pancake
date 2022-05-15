@@ -1,6 +1,7 @@
 from data import Data
 from sklearn.linear_model import LogisticRegression
 from sklearn.naive_bayes import MultinomialNB
+import copy
 
 query_strategies = [
     ("max_prob", 1),
@@ -23,7 +24,7 @@ dataset = "Cultural"
 data_config = {
     "vande": {
         "data": Data(
-            "../asset/pickle_datasets/test_vande_200_papers.pickle",
+            "./asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
             label_column="title_label",
             features_columns=["title", "abstract"]
@@ -31,7 +32,7 @@ data_config = {
     },
     "vande_2": {
         "data": Data(
-            "../asset/pickle_datasets/test_vande_200_papers.pickle",
+            "./asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
             label_column="title_label",
             features_columns=["processed_title", "processed_abstract", "processed_endnote_pdf_text"]
@@ -95,8 +96,8 @@ feature_configs = {
                     "percentile": 100,
                     "prioritize": False,
                     "revectorize": False,
-                    "feature_before_vectorize": ["title", "abstract"],
-                    "feature_after_vectorize": ["title", "abstract"],
+                    "feature_before_vectorize": ["title"],
+                    "feature_after_vectorize": ["title"],
                 },
                 "title_abstract_processed": {
                     "label": "fulltext_label",
@@ -108,15 +109,15 @@ feature_configs = {
                     "percentile": 100,
                     "prioritize": False,
                     "revectorize": False,
-                    "feature_before_vectorize": ["processed_title", "processed_abstract", "processed_endnote_pdf_text"],
-                    "feature_after_vectorize": ["processed_title", "processed_abstract", "processed_endnote_pdf_text"],
+                    "feature_before_vectorize": ["title", "abstract"],
+                    "feature_after_vectorize": ["title", "abstract"],
                 },
             }
 
 full_configs = {
     "vande": {
         "data": Data(
-            "../asset/pickle_datasets/test_vande_200_papers.pickle",
+            "./asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
             label_column="title_label",
             features_columns=["title", "abstract"],
@@ -124,10 +125,10 @@ full_configs = {
         ),
         "strategies": {"max_prob": {
             "step": 1,
-            "configs": feature_configs
+            "configs": copy.deepcopy(feature_configs)
         }, "uncertainty": {
             "step": 1,
-            "configs": feature_configs
+            "configs": copy.deepcopy(feature_configs)
         }},
     },
 }
