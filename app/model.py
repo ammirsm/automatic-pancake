@@ -9,6 +9,8 @@ class LearningModel:
     def __init__(
         self,
         data,
+        feature_before_vectorize,
+        feature_after_vectorize,
         label_column="label",
         ngram_max=1,
         model=MultinomialNB(),
@@ -27,8 +29,8 @@ class LearningModel:
         self.sampler = sampler
         self.tokenizer = tokenizer
         self.revectorize = revectorize
-        self.features = data.features_columns
-        self.features_for_vectorize = data.features_columns
+        self.features = feature_before_vectorize
+        self.features_for_vectorize = feature_after_vectorize
         self._init_data()
         # print(f"number of paper is : {len(self.data)}")
 

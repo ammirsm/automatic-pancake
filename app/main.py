@@ -1,3 +1,4 @@
+import copy
 import os
 import warnings
 from datetime import datetime
@@ -46,9 +47,9 @@ if __name__ == "__main__":
     main_directory_name = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
 
     aggregate_results = []
-    full_configs_cache = full_configs.copy()
+    full_configs_cache = copy.deepcopy(full_configs)
     for iteration in range(number_of_iterations):
-        full_configs = full_configs_cache.copy()
+        full_configs = copy.deepcopy(full_configs_cache)
         for dataset_name, dataset in full_configs.items():
             dataset["data"].init_data()
             for strategy_name, strategy in dataset["strategies"].items():
@@ -62,6 +63,8 @@ if __name__ == "__main__":
                         sampler=config["sampler"],
                         tokenizer=config["tokenizer"],
                         revectorize=config["revectorize"],
+                        feature_before_vectorize=config["feature_before_vectorize"],
+                        feature_after_vectorize=config["feature_after_vectorize"],
                     )
                     print(config)
                     config["agent"] = ActiveLearningAgent(
@@ -76,7 +79,7 @@ if __name__ == "__main__":
                     config["agent"].start_active_learning()
 
                     plot_data = config["agent"].plot_data()
-
+                    print(f"-------\n {config_name} \n", plot_data)
                     config["plot_data"] = plot_data
 
                     export_config(
