@@ -95,21 +95,14 @@ def draw_helper(average_result, main_directory_name):
             ]
             path = result + "/".join(dirs)
             os.makedirs(path, exist_ok=True)
-            y_axis = [
-                0,
-            ]
-            count = 2
-            while count < dataset["data"].number_of_papers:
-                y_axis.append(count)
-                count += dataset["data"].cycle
-            y_axis.append(dataset["data"].number_of_papers)
+
             plt.rcParams["figure.figsize"] = [15, 9]
             plt.rcParams["figure.dpi"] = 100
             plt.title(f"{dataset_name} {strategy_name}")
             plt.ylabel("% of found relavant papers")
             plt.xlabel("# of reviewed papers")
             for config_name, config in strategy["configs"].items():
-                plt.plot(y_axis, config["plot_data"], label=config_name)
+                plt.plot(dataset["data"].y_axis, config["plot_data"], label=config_name)
             output_file_path = os.path.join(path, f"{strategy_name}.pdf")
             plt.legend()
             plt.savefig(output_file_path)

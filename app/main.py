@@ -120,6 +120,7 @@ if __name__ == "__main__":
                         "strategies"
                     ][strategy_name]["configs"][config_name]
                     print(result_pointer["plot_data"][1])
+                    dataset["data"].y_axis = result_pointer["plot_data"][0]
                     plot_data_matrix.append(result_pointer["plot_data"][1])
                 plot_data_matrix = np.matrix(plot_data_matrix)
                 config["plot_data"] = np.array(plot_data_matrix.mean(0)).tolist()[0]
