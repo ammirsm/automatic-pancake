@@ -24,7 +24,7 @@ dataset = "Cultural"
 data_config = {
     "vande": {
         "data": Data(
-            "./asset/pickle_datasets/test_vande_200_papers.pickle",
+            "../asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
             label_column="title_label",
             features_columns=["title", "abstract"]
@@ -32,7 +32,7 @@ data_config = {
     },
     "vande_2": {
         "data": Data(
-            "./asset/pickle_datasets/test_vande_200_papers.pickle",
+            "../asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
             label_column="title_label",
             features_columns=["processed_title", "processed_abstract", "processed_endnote_pdf_text"]
@@ -42,6 +42,8 @@ data_config = {
 
 for i in data_config:
     data_config[i]["relevant_papers"] = data_config[i]["data"].data.loc[data_config[i]["data"].data.label == 1].shape[0]
+
+
 
 model_configs = {
     "fulltext_lr_with_abstract": {
@@ -117,7 +119,24 @@ feature_configs = {
 full_configs = {
     "vande": {
         "data": Data(
-            "./asset/pickle_datasets/test_vande_200_papers.pickle",
+            "../asset/pickle_datasets/test_vande_200_papers.pickle",
+            papers_count=number_of_papers,
+            label_column="title_label",
+            features_columns=["title", "abstract"],
+            filter_data="all",
+            cycle=20,
+        ),
+        "strategies": {"max_prob": {
+            "step": 1,
+            "configs": copy.deepcopy(feature_configs)
+        }, "uncertainty": {
+            "step": 1,
+            "configs": copy.deepcopy(feature_configs)
+        }},
+    },
+    "vande_2": {
+        "data": Data(
+            "../asset/pickle_datasets/test_vande_200_papers.pickle",
             papers_count=number_of_papers,
             label_column="title_label",
             features_columns=["title", "abstract"],
