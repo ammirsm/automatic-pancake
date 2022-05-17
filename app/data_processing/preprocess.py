@@ -125,11 +125,11 @@ class PreprocessTFIDF(PreprocessBase):
                 self.data[self.data["libkey-fullTextFile"] != ""]
             ),
             "crossref_founded": len(self.data[self.data["crossref-response"] != ""]),
-            "endnote_fulltext_found": len(
-                self.data[self.data["processed_pdf_manual_pdf_text"] != ""]
+            "endnote_papers_founded": len(
+                self.data[self.data["endnote-pdf_text"] != ""]
             ),
-            "fultext_accepted_papers": len(
-                self.data[self.data["processed_endnote_pdf_text"] != ""]
+            "pdf_manual_founded": len(
+                self.data[self.data["pdf_manual-pdf_text"] != ""]
             ),
         }
         self.report_obj = {**self.report_obj, **report}
