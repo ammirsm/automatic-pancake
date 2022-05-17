@@ -104,7 +104,7 @@ if __name__ == "__main__":
         aggregate_results.append(full_configs)
     # mean of all results
     if number_of_iterations > 1:
-        average_result = full_configs
+        average_result = copy.deepcopy(full_configs)
 
     for dataset_name, dataset in average_result.items():
         for strategy_name, strategy in dataset["strategies"].items():
@@ -114,9 +114,6 @@ if __name__ == "__main__":
                 )
 
                 plot_data_matrix = []
-                average_result_pointer = average_result[dataset_name]["strategies"][
-                    strategy_name
-                ]["configs"][config_name]
 
                 for iteration in range(number_of_iterations):
                     result_pointer = aggregate_results[iteration][dataset_name][
@@ -125,8 +122,6 @@ if __name__ == "__main__":
                     print(result_pointer["plot_data"][1])
                     plot_data_matrix.append(result_pointer["plot_data"][1])
                 plot_data_matrix = np.matrix(plot_data_matrix)
-                average_result_pointer["plot_data"] = np.array(
-                    plot_data_matrix.mean(0)
-                ).tolist()[0]
+                config["plot_data"] = np.array(plot_data_matrix.mean(0)).tolist()[0]
 
-    draw_helper(aggregate_results)
+    draw_helper(average_result, main_directory_name)

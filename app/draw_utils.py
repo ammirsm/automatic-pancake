@@ -2,7 +2,7 @@ import os
 
 from matplotlib import pyplot as plt
 
-from app.configs import output_dir
+from app.configs import output_dir, result
 from app.import_export import import_data
 
 
@@ -84,29 +84,48 @@ def generate_strategy_data(strategy_data, path, y_axis):
     return y_axis
 
 
-def draw_helper(strategies_result_pickle_file_path):
-    if not strategies_result_pickle_file_path[-1] == "/":
-        strategies_result_pickle_file_path += "/"
-    output_path = os.path.join(strategies_result_pickle_file_path, output_dir)
-    os.makedirs(output_path, exist_ok=True)
-    strategy_data = {}
-    y_axis = []
-    y_axis = generate_strategy_data(
-        strategy_data, strategies_result_pickle_file_path, y_axis
-    )
-    # number_of_relevant = y_axis[1]
-    y_axis = y_axis[0]
-    strategy_mean_data = {}
-    generate_mean_plot_data(strategy_mean_data, strategy_data)
-    for strategy_k, strategy_d in strategy_mean_data.items():
-        plt.rcParams["figure.figsize"] = [15, 9]
-        plt.rcParams["figure.dpi"] = 100
-        plt.title(strategy_k)
-        plt.ylabel("% of found relavant papers")
-        plt.xlabel("# of reviewed papers")
-        for model_k, model_d in strategy_d.items():
-            plt.plot(y_axis, model_d, label=model_k)
-        output_file_path = os.path.join(output_path, f"{strategy_k}.pdf")
-        plt.legend()
-        plt.savefig(output_file_path)
-        plt.clf()  # clear figure
+def draw_helper(average_result, main_directory_name):
+    for dataset_name, dataset in average_result.items():
+        for strategy_name, strategy in dataset["strategies"].items():
+            dirs = [
+                main_directory_name,
+                dataset_name,
+                "average",
+                strategy_name,
+            ]
+            path = result + "/".join(dirs)
+            os.makedirs(path, exist_ok=True)
+            y_axis = [
+                0,
+            ]
+            count = 2
+            while count < dataset["data"].number_of_papers:
+                y_axis.append(count)
+                count += dataset["data"].cycle
+            y_axis.append(dataset["data"].number_of_papers)
+            plt.rcParams["figure.figsize"] = [15, 9]
+            plt.rcParams["figure.dpi"] = 100
+            plt.title(f"{dataset_name} {strategy_name}")
+            plt.ylabel("% of found relavant papers")
+            plt.xlabel("# of reviewed papers")
+            for config_name, config in strategy["configs"].items():
+                plt.plot(y_axis, config["plot_data"], label=config_name)
+            output_file_path = os.path.join(path, f"{strategy_name}.pdf")
+            plt.legend()
+            plt.savefig(output_file_path)
+            plt.clf()  # clear figure
+    #
+    # if not strategies_result_pickle_file_path[-1] == "/":
+    #     strategies_result_pickle_file_path += "/"
+    # output_path = os.path.join(strategies_result_pickle_file_path, output_dir)
+    # os.makedirs(output_path, exist_ok=True)
+    # strategy_data = {}
+    # y_axis = []
+    # y_axis = generate_strategy_data(
+    #     strategy_data, strategies_result_pickle_file_path, y_axis
+    # )
+    # # number_of_relevant = y_axis[1]
+    # y_axis = y_axis[0]
+    # strategy_mean_data = {}
+    # generate_mean_plot_data(strategy_mean_data, strategy_data)
+    # for strategy_k, strategy_d in strategy_mean_data.items():

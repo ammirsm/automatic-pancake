@@ -13,13 +13,16 @@ class Data:
         features_columns,
         filter_data="all",
         papers_count=None,
+        cycle=20,
     ):
         self.pickle_file = pickle_file
+        self.cycle = cycle
         self.papers_count = papers_count
         self.label_column = label_column
         self.features_columns = features_columns
         self.pure_data = import_data(self.pickle_file)
         self.init_data()
+        self.number_of_papers = self.data.shape[0]
 
     def init_data(self):
         self.data = pd.DataFrame(self.pure_data)
