@@ -14,10 +14,10 @@ from app.draw_utils import draw_helper
 warnings.filterwarnings("ignore")
 
 
-def export_config(dirs, name):
+def export_pickle(dirs, name, the_data):
     path = result + "/".join(dirs)
     os.makedirs(path, exist_ok=True)
-    export_data(config, f"{path}/{name}.pickle")
+    export_data(the_data, f"{path}/{name}.pickle")
 
 
 def run(config, config_pointer):
@@ -82,7 +82,7 @@ if __name__ == "__main__":
                     print(f"-------\n {config_name} \n", plot_data)
                     config["plot_data"] = plot_data
 
-                    export_config(
+                    export_pickle(
                         [
                             main_directory_name,
                             dataset_name,
@@ -90,6 +90,7 @@ if __name__ == "__main__":
                             strategy_name,
                         ],
                         config_name,
+                        config,
                     )
 
                     config["learning_model"] = None
@@ -105,6 +106,12 @@ if __name__ == "__main__":
     # mean of all results
     if number_of_iterations > 1:
         average_result = copy.deepcopy(full_configs)
+    # export all of the configs to file if we need to redraw or rerun the experiment
+    export_pickle(
+        [main_directory_name],
+        "aggregate_results",
+        aggregate_results,
+    )
 
     for dataset_name, dataset in average_result.items():
         for strategy_name, strategy in dataset["strategies"].items():
@@ -124,5 +131,16 @@ if __name__ == "__main__":
                     plot_data_matrix.append(result_pointer["plot_data"][1])
                 plot_data_matrix = np.matrix(plot_data_matrix)
                 config["plot_data"] = np.array(plot_data_matrix.mean(0)).tolist()[0]
+                config["plot_dict"] = dict(
+                    zip(result_pointer["plot_data"][0], config["plot_data"])
+                )
+
+    export_pickle(
+        [
+            main_directory_name,
+        ],
+        "average_result",
+        average_result,
+    )
 
     draw_helper(average_result, main_directory_name)

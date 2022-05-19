@@ -10,16 +10,17 @@ class Data:
         self,
         pickle_file,
         label_column,
-        features_columns,
+        features_columns_cleaning,
         filter_data="all",
         papers_count=None,
         cycle=20,
     ):
+        self.filter_data = filter_data
         self.pickle_file = pickle_file
         self.cycle = cycle
         self.papers_count = papers_count
         self.label_column = label_column
-        self.features_columns = features_columns
+        self.features_columns = features_columns_cleaning
         self.pure_data = import_data(self.pickle_file)
         self.init_data()
         self.number_of_papers = self.data.shape[0]
@@ -33,6 +34,12 @@ class Data:
         self._shuffle_data()
         self._cut_data()
         self.update_profile()
+        if self.filter_data == "all":
+            pass
+        elif self.filter_data == "endnote":
+            self.data = self.data[self.data["endnote-pdf_text"] != ""]
+        elif self.filter_data == "fulltext":
+            self.data = self.data[self.data[" "] != ""]
 
     def update_profile(self):
         self.profile = ProfileReport(self.data, title="Data Profile Report")
