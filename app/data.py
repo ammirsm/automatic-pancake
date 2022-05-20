@@ -35,11 +35,11 @@ class Data:
         self._cut_data()
         self.update_profile()
         if self.filter_data == "all":
-            pass
+            self.data = self.data[self.data["title_label"] != ""]
         elif self.filter_data == "endnote":
             self.data = self.data[self.data["endnote-pdf_text"] != ""]
         elif self.filter_data == "fulltext":
-            self.data = self.data[self.data["title_label"] != 1]
+            self.data = self.data[self.data["fulltext_label"] != ""]
 
     def update_profile(self):
         self.profile = ProfileReport(self.data, title="Data Profile Report")
