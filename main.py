@@ -4,13 +4,13 @@ import warnings
 from datetime import datetime
 
 import numpy as np
-from agent import ActiveLearningAgent
-from import_export import export_data
-from load_configs import full_configs
-from model import LearningModel
 
+from app.agent import ActiveLearningAgent
 from app.configs import cycle, number_of_iterations, result
 from app.draw_utils import draw_helper
+from app.import_export import export_data
+from app.load_configs import full_configs
+from app.model import LearningModel
 
 warnings.filterwarnings("ignore")
 

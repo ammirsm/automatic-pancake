@@ -1,7 +1,5 @@
 import copy
 
-from data import Data
-
 from app.configs import (
     cycle,
     data_set_path_list,
@@ -15,6 +13,7 @@ from app.configs import (
     number_of_papers,
     strategies,
 )
+from app.data import Data
 
 new_feature_configs = {}
 for key, feature_config in feature_configs.items():
