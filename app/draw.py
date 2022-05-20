@@ -2,8 +2,8 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy
-from configs import output_dir
 
+from app.configs import output_dir
 from app.draw_utils import draw_helper
 
 is_exist = os.path.exists(output_dir)

@@ -5,10 +5,11 @@ from datetime import datetime
 
 import numpy as np
 from agent import ActiveLearningAgent
-from configs import cycle, full_configs, number_of_iterations, result
 from import_export import export_data
+from load_configs import full_configs
 from model import LearningModel
 
+from app.configs import cycle, number_of_iterations, result
 from app.draw_utils import draw_helper
 
 warnings.filterwarnings("ignore")
