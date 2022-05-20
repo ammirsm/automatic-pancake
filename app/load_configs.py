@@ -13,7 +13,6 @@ from app.configs import (
     number_of_papers,
     strategies,
 )
-from app.data import Data
 
 new_feature_configs = {}
 for key, feature_config in feature_configs.items():
@@ -28,6 +27,7 @@ for key, feature_config in feature_configs.items():
     for key_ext, extractor in feature_extractors.items():
         new_key = key + "_" + key_ext
         new_feature_configs[new_key] = copy.deepcopy(feature_config)
+        new_feature_configs[new_key]["extractor_key"] = key_ext
         new_feature_configs[new_key] = {**new_feature_configs[new_key], **extractor}
 feature_configs = copy.deepcopy(new_feature_configs)
 
@@ -36,28 +36,37 @@ for key, feature_config in feature_configs.items():
     for key_ext, extractor in features_before_and_after.items():
         new_key = key + "_" + key_ext
         new_feature_configs[new_key] = copy.deepcopy(feature_config)
+        new_feature_configs[new_key]["features_key"] = key_ext
         new_feature_configs[new_key] = {**new_feature_configs[new_key], **extractor}
 feature_configs = copy.deepcopy(new_feature_configs)
 
 for key, strategy in strategies.items():
     strategies[key] = {
-        "configs": copy.deepcopy(feature_configs),
+        "configs": None,
         "step": 1,
     }
 
-full_configs = {}
+full_configs = []
 
 for label_column in label_column_list:
     for filter_data in filter_data_list:
         for data_set_name, data_set_path in data_set_path_list.items():
-            full_configs[label_column + "_" + filter_data + "_" + data_set_name] = {
-                "data": Data(
-                    pickle_file=data_set_path,
-                    label_column=label_column,
-                    features_columns_cleaning=features_columns_cleaning,
-                    filter_data=filter_data,
-                    cycle=cycle,
-                    papers_count=number_of_papers,
-                ),
-                "strategies": copy.deepcopy(strategies),
-            }
+            for strategy_name, strategy in strategies.items():
+                for feature_config_name, feature_config in feature_configs.items():
+                    full_configs.append(
+                        {
+                            "data": dict(
+                                pickle_file=data_set_path,
+                                label_column=label_column,
+                                features_columns_cleaning=features_columns_cleaning,
+                                filter_data=filter_data,
+                                cycle=cycle,
+                                papers_count=number_of_papers,
+                            ),
+                            "strategy": copy.deepcopy(strategy),
+                            "strategy_name": strategy_name,
+                            "data_set_name": data_set_name,
+                            "feature_config": copy.deepcopy(feature_config),
+                            "feature_config_name": feature_config_name,
+                        }
+                    )

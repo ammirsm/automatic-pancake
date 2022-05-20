@@ -18,3 +18,14 @@ def export_data(data, filename):
     file = open(filename, "wb")
     pickle.dump(data, file, protocol=pickle.HIGHEST_PROTOCOL)
     file.close()
+
+
+def export_json(data, filename):
+    """
+    Export data to a file
+    """
+    import json
+
+    file = open(filename, "w")
+    json.dump(data, file, indent=4)
+    file.close()
