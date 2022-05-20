@@ -14,10 +14,10 @@ from app.model import LearningModel
 warnings.filterwarnings("ignore")
 
 
-def export_json_file(dirs, name, the_data):
+def export_json_file(dirs, file_name, the_data):
     path = result + "/".join(dirs)
     os.makedirs(path, exist_ok=True)
-    export_json(the_data, f"{path}/{name}.json")
+    export_json(the_data, f"{path}/{file_name}.json")
 
 
 if __name__ == "__main__":
