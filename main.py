@@ -7,17 +7,11 @@ from datetime import datetime
 from app.agent import ActiveLearningAgent
 from app.configs import cycle, number_of_iterations, result
 from app.data import Data
-from app.import_export import export_data, export_json
+from app.import_export import export_json
 from app.load_configs import full_configs
 from app.model import LearningModel
 
 warnings.filterwarnings("ignore")
-
-
-def export_pickle(dirs, name, the_data):
-    path = result + "/".join(dirs)
-    os.makedirs(path, exist_ok=True)
-    export_data(the_data, f"{path}/{name}.pickle")
 
 
 def export_json_file(dirs, name, the_data):
