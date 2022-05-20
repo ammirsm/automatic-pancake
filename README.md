@@ -10,6 +10,17 @@ $ pre-commit install
 ## Download stopwords from the repository
 
 ## Preprocess your data with preprocess module
+```python
+from app.data_processing.preprocess import PreprocessTFIDF
+path = "" # your path to the data pickle
+path_export = "" # preprocessed data pickle export
+data = PreprocessTFIDF(path)
+data.process()
+data.export(path_export)
+data.report()
+print(data.report_obj) # report object will contain all of the data
+# ```
+
 
 
 ## TODO LIST
