@@ -1,4 +1,5 @@
 import copy
+import sys
 
 from app.configs import (
     cycle,
@@ -70,3 +71,5 @@ for label_column in label_column_list:
                             "feature_config_name": feature_config_name,
                         }
                     )
+
+main_directory_name = sys.argv[1] if len(sys.argv) >= 2 else None

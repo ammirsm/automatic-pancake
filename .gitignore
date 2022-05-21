@@ -296,3 +296,8 @@ asset/
 app/configs.py
 result/
 output/
+logs/
+configs/
+
+# processes id in parallel running
+.jobs_id

@@ -8,7 +8,7 @@ from app.agent import ActiveLearningAgent
 from app.configs import cycle, number_of_iterations, result
 from app.data import Data
 from app.import_export import export_json
-from app.load_configs import full_configs
+from app.load_configs import full_configs, main_directory_name
 from app.model import LearningModel
 
 warnings.filterwarnings("ignore")
@@ -21,7 +21,8 @@ def export_json_file(dirs, file_name, the_data):
 
 
 if __name__ == "__main__":
-    main_directory_name = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
+    if not main_directory_name:
+        main_directory_name = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
     print("START", flush=True)
     for the_config in full_configs:
         for iteration in range(number_of_iterations):
