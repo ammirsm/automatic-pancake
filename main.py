@@ -23,9 +23,11 @@ def export_json_file(dirs, file_name, the_data):
 if __name__ == "__main__":
     if not main_directory_name:
         main_directory_name = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
+    first_time = datetime.now()
     print("START", flush=True)
     for the_config in full_configs:
         for iteration in range(number_of_iterations):
+            tic = datetime.now()
             cache_object = copy.deepcopy(the_config)
             the_config["data_obj"] = Data(**the_config["data"])
             the_config["data_obj"].init_data()
@@ -74,7 +76,9 @@ if __name__ == "__main__":
                 the_config,
             )
             the_config = copy.deepcopy(cache_object)
-            print("", flush=True)
+            print("time: ", datetime.now() - tic, flush=True)
+
+    print("-------\ntotal time spend: ", datetime.now() - first_time, flush=True)
     print(
         "-----------------------------------------END----------------------------------------"
     )
