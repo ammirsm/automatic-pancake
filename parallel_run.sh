@@ -17,10 +17,7 @@ fi
 # Configs for runnong parallel
 set -e
 
-LOGS_DIR=./logs/
-CONFIGS_DIR=./configs/
-NUMBER_OF_ITERATION=2
-MAIN_DIR_NAME=`date +%m-%d-%Y_%H:%M:%S`
+. parallel_config.env
 
 mkdir -p $LOGS_DIR
 CONFIGS=$(ls $CONFIGS_DIR)

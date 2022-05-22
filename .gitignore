@@ -299,5 +299,6 @@ output/
 logs/
 configs/
 
+parallel_config.env
 # processes id in parallel running
 .jobs_id
