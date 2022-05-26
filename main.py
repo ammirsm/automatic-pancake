@@ -32,6 +32,11 @@ if __name__ == "__main__":
             the_config["data_obj"] = Data(**the_config["data"])
             the_config["data_obj"].init_data()
             name = f'{the_config["data_set_name"]} - {the_config["strategy_name"]} - {the_config["feature_config_name"]}'
+            print(
+                "-------\n",
+                f"{name} - {the_config['data']['label_column']} - {the_config['data']['filter_data']} ",
+                flush=True,
+            )
             features = the_config["feature_config"]
             the_config["learning_model"] = LearningModel(
                 the_config["data_obj"],
@@ -78,7 +83,8 @@ if __name__ == "__main__":
             the_config = copy.deepcopy(cache_object)
             print("time: ", datetime.now() - tic, flush=True)
 
-    print("-------\ntotal time spend: ", datetime.now() - first_time, flush=True)
+    print("-------\ntotal time spend: ", datetime.now() - first_time)
     print(
-        "-----------------------------------------END----------------------------------------"
+        "-----------------------------------------END----------------------------------------",
+        flush=True,
     )

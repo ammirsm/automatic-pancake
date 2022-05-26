@@ -193,9 +193,6 @@ class ActiveLearningAgent:
         return flag
 
     def start_active_learning(self):
-        print(
-            "-------\n", f"{self.name} - {self.update_training_set_strategy}", "started"
-        )
         start_time = timeit.default_timer()
         functinon_time = {
             "name": self.name,
