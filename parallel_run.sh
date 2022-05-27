@@ -32,7 +32,7 @@ do
   do
 #    echo $CONFIGS_DIR$CONF
     LOG_FILE=${LOGS_DIR}${CONF}${i}.log
-    python main.py $MAIN_DIR_NAME >> $LOG_FILE &
+    python main.py $MAIN_DIR_NAME &>> $LOG_FILE &
   done
   sleep 5
 done
