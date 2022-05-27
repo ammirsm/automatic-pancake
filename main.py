@@ -64,6 +64,8 @@ if __name__ == "__main__":
 
             the_config["plot_data"] = plot_data
             the_config["times"] = the_config["agent"].times_spent
+            the_config["number_of_papers"] = the_config["data_obj"].number_of_papers
+            the_config["number_of_relavant"] = the_config["data_obj"].number_of_relavant
             the_config["learning_model"] = None
             the_config["data_obj"] = None
             the_config["agent"] = None
