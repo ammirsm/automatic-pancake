@@ -26,6 +26,7 @@ class ActiveLearningAgent:
         self.founded_papers_count = [0]
         self.total_papers_count = [0]
         self.vectorized_cycle = 0
+        self.times_spent = [0.0]
 
     def init_prior_knowledge(self, positive_papers_count=1, negative_papers_count=1):
         self.learning_model.data.loc[
@@ -242,6 +243,7 @@ class ActiveLearningAgent:
                     ]
                 ),
             )
+            self.times_spent.append(round(timeit.default_timer() - start_time, 2))
         functinon_time["total"] += timeit.default_timer() - start_time
 
         # print('-------\n', self.name, 'time')
