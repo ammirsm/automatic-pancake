@@ -45,6 +45,8 @@ if __name__ == "__main__":
                 sampler=features["sampler"],
                 tokenizer=features["tokenizer"],
                 revectorize=features["revectorize"],
+                tokenizer_max_df=features["tokenizer_max_df"],
+                tokenizer_min_df=features["tokenizer_min_df"],
                 feature_before_vectorize=features["feature_before_vectorize"],
                 feature_after_vectorize=features["feature_after_vectorize"],
             )

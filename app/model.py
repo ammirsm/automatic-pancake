@@ -19,6 +19,8 @@ class LearningModel:
         sampler=None,
         tokenizer="TF-IDF",
         revectorize=False,
+        tokenizer_max_df=0.7,
+        tokenizer_min_df=0.01,
     ):
         self.percentile = the_percentile
         self.label_column = label_column
@@ -28,6 +30,9 @@ class LearningModel:
         self.sd_counter = 0
         self.sampler = sampler
         self.tokenizer = tokenizer
+        self.tokenizer_max_df = tokenizer_max_df
+        self.tokenizer_min_df = tokenizer_min_df
+
         self.revectorize = revectorize
         self.features = feature_before_vectorize
         self.features_for_vectorize = feature_after_vectorize
@@ -132,8 +137,8 @@ class LearningModel:
 
     def tfidf(self):
         vectorizer = TfidfVectorizer(
-            max_df=0.7,
-            min_df=0.01,
+            max_df=self.tokenizer_max_df,
+            min_df=self.tokenizer_min_df,
             # max_features=1000,
             stop_words="english",
             ngram_range=(1, self.ngram_max),
