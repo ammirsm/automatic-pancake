@@ -40,6 +40,7 @@ class Data:
             self.data = self.data[self.data["endnote-pdf_text"] != ""]
         elif self.filter_data == "fulltext":
             self.data = self.data[self.data["fulltext_label"] != ""]
+        self.data.reset_index(inplace=True, drop=True)
 
     def update_profile(self):
         self.profile = ProfileReport(self.data, title="Data Profile Report")
