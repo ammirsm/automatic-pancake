@@ -6,7 +6,7 @@ from sklearn.linear_model import LogisticRegression
 
 number_of_papers = None
 number_of_iterations = 1
-cycle = 20
+cycle = 50
 features_columns_cleaning = [
     "title",
     "abstract",
