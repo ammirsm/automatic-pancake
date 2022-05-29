@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 # from sklearn.svm import SVC
 
 number_of_papers = None
-number_of_iterations = 2
+number_of_iterations = 10
 cycle = 50
 features_columns_cleaning = [
     "title",
@@ -27,11 +27,11 @@ feature_extractors = {
         "tokenizer_max_df": 0.7,
         "tokenizer_min_df": 0.2,
     },
-    "TFIDF_High": {
-        "tokenizer": "TF-IDF",
-        "tokenizer_max_df": 0.9,
-        "tokenizer_min_df": 0.1,
-    },
+    # "TFIDF_High": {
+    #     "tokenizer": "TF-IDF",
+    #     "tokenizer_max_df": 0.9,
+    #     "tokenizer_min_df": 0.1,
+    # },
     # "BagOfWords": {
     #     "tokenizer": "BOW",
     # }
@@ -71,13 +71,20 @@ features_before_and_after = {
     },
 }
 strategies = {
-    # "max_prob": None,
-    "uncertainty": None,
+    "max_prob": None,
+    # "uncertainty": None,
 }
-label_column_list = ["title_label", "fulltext_label"]
-filter_data_list = ["all", "endnote", "fulltext"]
+label_column_list = [
+    "title_label",
+    # "fulltext_label"
+]
+filter_data_list = [
+    # "all",
+    # "endnote",
+    "fulltext"
+]
 data_set_path_list = {
-    "vandis": "./asset/pickle_datasets/vandis_full.pickle",
+    "cultural": "./asset/pickle_datasets/cultural_full_with_label.pickle",
 }
 feature_configs = {
     "-": {
