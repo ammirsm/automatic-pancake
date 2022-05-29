@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 # from sklearn.svm import SVC
 
 number_of_papers = None
-number_of_iterations = 1
+number_of_iterations = 10
 cycle = 50
 features_columns_cleaning = [
     "title",
