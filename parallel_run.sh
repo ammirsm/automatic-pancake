@@ -19,7 +19,7 @@ set -e
 
 . parallel_config.env
 
-mkdir -p $LOGS_DIR
+mkdir -p $MAIN_DIR_NAME$LOGS_DIR
 CONFIGS=$(ls $CONFIGS_DIR)
 echo "main directory ---> $MAIN_DIR_NAME"
 
@@ -31,7 +31,7 @@ do
   for (( i=1; i<=$NUMBER_OF_ITERATION ; i++ ))
   do
 #    echo $CONFIGS_DIR$CONF
-    LOG_FILE=${LOGS_DIR}${CONF}${i}.log
+    LOG_FILE=${MAIN_DIR_NAME}${LOGS_DIR}${CONF}${i}.log
     python main.py $MAIN_DIR_NAME &>> $LOG_FILE &
   done
   sleep 5
