@@ -28,8 +28,10 @@ class Data:
     def init_data(self):
         self.data = pd.DataFrame(self.pure_data)
         self.data = self.data.fillna("")
+        self.data = self.data[self.data["is_duplicate"] == 0]
         self.data["label"] = self.data[self.label_column]
-        self.number_of_relavant = self.data[self.data["label"] == 1].shape[0]
+        self.data = self.data[self.data["label"] != ""]
+        self.data["label"] = self.data["label"].astype(int)
         self._clean_data()
         self._shuffle_data()
         self._cut_data()
@@ -41,6 +43,7 @@ class Data:
         elif self.filter_data == "fulltext":
             self.data = self.data[self.data["fulltext_label"] != ""]
         self.data.reset_index(inplace=True, drop=True)
+        self.number_of_relavant = self.data[self.data["label"] == 1].shape[0]
 
     def update_profile(self):
         self.profile = ProfileReport(self.data, title="Data Profile Report")
