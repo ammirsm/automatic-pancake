@@ -42,6 +42,9 @@ class Data:
             self.data = self.data[self.data["endnote-pdf_text"] != ""]
         elif self.filter_data == "fulltext":
             self.data = self.data[self.data["fulltext_label"] != ""]
+            self.data = self.data[
+                (self.data["title_label"] == 1) | (self.data["title_label"] == "1")
+            ]
         self.data.reset_index(inplace=True, drop=True)
         self.number_of_relavant = self.data[self.data["label"] == 1].shape[0]
 
