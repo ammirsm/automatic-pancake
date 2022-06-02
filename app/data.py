@@ -48,6 +48,9 @@ class Data:
         self.data.reset_index(inplace=True, drop=True)
         self.number_of_relavant = self.data[self.data["label"] == 1].shape[0]
 
+    def label_unique_values(self):
+        return self.data["label"].unique()
+
     def update_profile(self):
         self.profile = ProfileReport(self.data, title="Data Profile Report")
 
