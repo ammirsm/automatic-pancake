@@ -22,21 +22,21 @@ models = {
     # "RandomForest": RandomForestClassifier(n_estimators=100),
 }
 feature_extractors = {
-    # "TFIDF_Low": {
-    #     "tokenizer": "TF-IDF",
-    #     "tokenizer_max_df": 0.7,
-    #     "tokenizer_min_df": 0.2,
-    # },
+    "TFIDF_Low": {
+        "tokenizer": "TF-IDF",
+        "tokenizer_max_df": 0.7,
+        "tokenizer_min_df": 0.2,
+    },
     # "TFIDF_High": {
     #     "tokenizer": "TF-IDF",
     #     "tokenizer_max_df": 0.9,
     #     "tokenizer_min_df": 0.1,
     # },
-    "BagOfWords": {
-        "tokenizer": "BOW",
-        "tokenizer_max_df": 0.7,
-        "tokenizer_min_df": 0.2,
-    }
+    # "BagOfWords": {
+    #     "tokenizer": "BOW",
+    #     "tokenizer_max_df": 0.7,
+    #     "tokenizer_min_df": 0.2,
+    # }
 }
 features_before_and_after = {
     "baseline": {
