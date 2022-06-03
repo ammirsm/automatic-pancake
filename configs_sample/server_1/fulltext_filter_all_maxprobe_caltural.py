@@ -34,6 +34,8 @@ feature_extractors = {
     # },
     "BagOfWords": {
         "tokenizer": "BOW",
+        "tokenizer_max_df": 0.7,
+        "tokenizer_min_df": 0.2,
     }
 }
 features_before_and_after = {
