@@ -155,6 +155,7 @@ class LearningModel:
         vectorizer = CountVectorizer(
             stop_words="english",
             ngram_range=(1, self.ngram_max),
+            max_features=5000,
         )
         # it should run in each iteration because we're changing vectorization in each iteration
         self.features_vectorized = vectorizer.fit_transform(
