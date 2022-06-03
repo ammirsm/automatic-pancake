@@ -141,7 +141,7 @@ class LearningModel:
         vectorizer = TfidfVectorizer(
             max_df=self.tokenizer_max_df,
             min_df=self.tokenizer_min_df,
-            # max_features=1000,
+            max_features=5000,
             stop_words="english",
             ngram_range=(1, self.ngram_max),
         )
