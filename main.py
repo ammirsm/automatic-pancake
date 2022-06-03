@@ -31,7 +31,7 @@ if __name__ == "__main__":
             cache_object = copy.deepcopy(the_config)
             the_config["data_obj"] = Data(**the_config["data"])
             the_config["data_obj"].init_data()
-            if the_config["data_obj"].label_unique_values() != 2:
+            if len(the_config["data_obj"].label_unique_values()) != 2:
                 print("Not binary classification")
                 continue
             name = f'{the_config["data_set_name"]} - {the_config["strategy_name"]} - {the_config["feature_config_name"]}'
