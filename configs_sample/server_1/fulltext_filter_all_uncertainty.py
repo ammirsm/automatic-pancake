@@ -22,21 +22,21 @@ models = {
     # "RandomForest": RandomForestClassifier(n_estimators=100),
 }
 feature_extractors = {
-    # "TFIDF_Low": {
-    #     "tokenizer": "TF-IDF",
-    #     "tokenizer_max_df": 0.7,
-    #     "tokenizer_min_df": 0.2,
-    # },
-    # "TFIDF_High": {
-    #     "tokenizer": "TF-IDF",
-    #     "tokenizer_max_df": 0.9,
-    #     "tokenizer_min_df": 0.1,
-    # },
-    "BagOfWords": {
-        "tokenizer": "BOW",
+    "TFIDF_Low": {
+        "tokenizer": "TF-IDF",
         "tokenizer_max_df": 0.7,
         "tokenizer_min_df": 0.2,
-    }
+    },
+    "TFIDF_High": {
+        "tokenizer": "TF-IDF",
+        "tokenizer_max_df": 0.9,
+        "tokenizer_min_df": 0.1,
+    },
+    # "BagOfWords": {
+    #     "tokenizer": "BOW",
+    #     "tokenizer_max_df": 0.7,
+    #     "tokenizer_min_df": 0.2,
+    # }
 }
 features_before_and_after = {
     "baseline": {
@@ -79,7 +79,7 @@ strategies = {
 label_column_list = ["title_label", "fulltext_label"]
 filter_data_list = ["all", "endnote", "fulltext"]
 data_set_path_list = {
-    # "cultural": "./asset/pickle_datasets/cultural_full_with_label.pickle",
+    "cultural": "./asset/pickle_datasets/cultural_full_with_label.pickle",
     "vande": "./asset/pickle_datasets/vande_full.pickle",
     "vandis": "./asset/pickle_datasets/vandis_full.pickle",
 }
