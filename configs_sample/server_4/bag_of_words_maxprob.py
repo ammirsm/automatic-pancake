@@ -1,6 +1,7 @@
-from sklearn.ensemble import RandomForestClassifier
+# from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.naive_bayes import MultinomialNB
+
+# from sklearn.naive_bayes import MultinomialNB
 
 # from sklearn.svm import SVC
 
@@ -17,9 +18,9 @@ output_dir = "output"
 result = "result/"
 models = {
     "LogisticRegression": LogisticRegression(),
-    "NaiveBayes": MultinomialNB(),
+    # "NaiveBayes": MultinomialNB(),
     # "SVM": SVC(probability=True),
-    "RandomForest": RandomForestClassifier(n_estimators=100),
+    # "RandomForest": RandomForestClassifier(n_estimators=100),
 }
 feature_extractors = {
     # "TFIDF_Low": {
@@ -34,6 +35,8 @@ feature_extractors = {
     # },
     "BagOfWords": {
         "tokenizer": "BOW",
+        "tokenizer_max_df": 0.7,
+        "tokenizer_min_df": 0.2,
     }
 }
 features_before_and_after = {
@@ -77,9 +80,9 @@ strategies = {
 label_column_list = ["title_label", "fulltext_label"]
 filter_data_list = ["all", "endnote", "fulltext"]
 data_set_path_list = {
-    # "cultural": "./asset/pickle_datasets/cultural_full_with_label.pickle",
+    "cultural": "./asset/pickle_datasets/cultural_full_with_label.pickle",
     "vande": "./asset/pickle_datasets/vande_full.pickle",
-    # "vandis": "./asset/pickle_datasets/vandis_full.pickle",
+    "vandis": "./asset/pickle_datasets/vandis_full.pickle",
 }
 feature_configs = {
     "-": {

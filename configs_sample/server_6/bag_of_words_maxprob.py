@@ -1,6 +1,6 @@
-# from sklearn.ensemble import RandomForestClassifier
-from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 
+# from sklearn.linear_model import LogisticRegression
 # from sklearn.naive_bayes import MultinomialNB
 
 # from sklearn.svm import SVC
@@ -17,10 +17,10 @@ features_columns_cleaning = [
 output_dir = "output"
 result = "result/"
 models = {
-    "LogisticRegression": LogisticRegression(),
+    # "LogisticRegression": LogisticRegression(),
     # "NaiveBayes": MultinomialNB(),
     # "SVM": SVC(probability=True),
-    # "RandomForest": RandomForestClassifier(n_estimators=100),
+    "RandomForest": RandomForestClassifier(n_estimators=100),
 }
 feature_extractors = {
     # "TFIDF_Low": {
@@ -74,8 +74,8 @@ features_before_and_after = {
     },
 }
 strategies = {
-    # "max_prob": None,
-    "uncertainty": None,
+    "max_prob": None,
+    # "uncertainty": None,
 }
 label_column_list = ["title_label", "fulltext_label"]
 filter_data_list = ["all", "endnote", "fulltext"]
