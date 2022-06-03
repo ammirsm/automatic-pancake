@@ -32,6 +32,7 @@ if __name__ == "__main__":
             the_config["data_obj"] = Data(**the_config["data"])
             the_config["data_obj"].init_data()
             if len(the_config["data_obj"].label_unique_values()) != 2:
+                the_config["data_obj"] = None
                 print("Not binary classification")
                 continue
             name = f'{the_config["data_set_name"]} - {the_config["strategy_name"]} - {the_config["feature_config_name"]}'
