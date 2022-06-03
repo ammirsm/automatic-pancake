@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
 from sklearn.naive_bayes import MultinomialNB
 
@@ -130,6 +130,8 @@ class LearningModel:
         tokenizer = self.tokenizer
         if tokenizer == "TF-IDF":
             self.tfidf()
+        if tokenizer == "BOW":
+            self.bagofwords()
         elif tokenizer == "sbert":
             self.sbert()
         elif tokenizer == "scibert":
@@ -140,6 +142,17 @@ class LearningModel:
             max_df=self.tokenizer_max_df,
             min_df=self.tokenizer_min_df,
             # max_features=1000,
+            stop_words="english",
+            ngram_range=(1, self.ngram_max),
+        )
+        # it should run in each iteration because we're changing vectorization in each iteration
+        self.features_vectorized = vectorizer.fit_transform(
+            self.data["features_vectorize"]
+        )
+        self.test_set_vectorized = vectorizer.transform(self.data["features_vectorize"])
+
+    def bagofwords(self):
+        vectorizer = CountVectorizer(
             stop_words="english",
             ngram_range=(1, self.ngram_max),
         )
