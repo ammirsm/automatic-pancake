@@ -77,7 +77,7 @@ strategies = {
     # "uncertainty": None,
 }
 label_column_list = ["title_label", "fulltext_label"]
-filter_data_list = ["all", "endnote", "fulltext"]
+filter_data_list = ["fulltext"]
 data_set_path_list = {
     "cultural": "./asset/pickle_datasets/cultural_full_with_label.pickle",
     "vande": "./asset/pickle_datasets/vande_full.pickle",
