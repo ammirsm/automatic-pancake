@@ -5,7 +5,7 @@ from glob import glob
 import numpy as np
 import pandas as pd
 
-path = "./app/result/server_result/**/*.json"
+path = "./server_result/**/*.json"
 
 json_files = glob(path, recursive=True)
 
@@ -15,11 +15,23 @@ def load_json_to_dict(json_file):
         return json.load(f)
 
 
+files_list = [load_json_to_dict(file) for file in json_files]
+files_df = pd.DataFrame(files_list)
+
 list_of_dict_data = []
 identifier = 0
-for i in range(110, len(json_files), 10):
-    this_group_file = json_files[i : i + 10]
-    json_data = [load_json_to_dict(file) for file in this_group_file]
+for i, row in files_df.iterrows():
+    # this_group_file = json_files[i : i + 10]
+    group_df = files_df[files_df.strategy_name == row["strategy_name"]][
+        files_df.data_set_name == row["data_set_name"]
+    ][files_df.feature_config_name == row["feature_config_name"]][
+        files_df.data == row["data"]
+    ]
+    json_data = group_df.to_dict("records")
+    if not json_data:
+        continue
+    # json_data = [load_json_to_dict(file) for file in this_group_file]
+    files_df.drop(group_df.index, axis=0, inplace=True)
     plot_data = []
     times = []
     y_axis = json_data[0]["plot_data"][0]
@@ -76,7 +88,7 @@ for i in range(110, len(json_files), 10):
     identifier += 1
 
 df = pd.DataFrame(list_of_dict_data)
-df.to_csv("./app/result/server_result/preprocess_parallel_result.csv", index=False)
+df.to_csv("./server_result/preprocess_parallel_result.csv", index=False)
 
 # https://drive.google.com/drive/u/0/folders/1Ob0AM1ElCen5ATf5yZ3iO41KsUSaPua7
 # https://public.tableau.com/app/profile/ranjan.bhattarai/viz/AmirTableauDashboard/Dashboard?publish=yes
