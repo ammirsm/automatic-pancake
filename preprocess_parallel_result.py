@@ -5,7 +5,7 @@ from glob import glob
 import numpy as np
 import pandas as pd
 
-path = "./server_result/**/*.json"
+path = "./app/result/server_result 3/**/*.json"
 
 json_files = glob(path, recursive=True)
 
@@ -15,22 +15,39 @@ def load_json_to_dict(json_file):
         return json.load(f)
 
 
-files_list = [load_json_to_dict(file) for file in json_files]
+files_list = []
+for file in json_files:
+    json_file_dict = load_json_to_dict(file)
+    json_file_dict["path"] = file
+    file_splited = file.split("/")
+    json_file_dict["file_directory"] = "/".join(file_splited[7:-1])
+    files_list.append(json_file_dict)
+
 files_df = pd.DataFrame(files_list)
 
 list_of_dict_data = []
 identifier = 0
+
+list_of_conditions = []
+
 for i, row in files_df.iterrows():
-    # this_group_file = json_files[i : i + 10]
-    group_df = files_df[files_df.strategy_name == row["strategy_name"]][
-        files_df.data_set_name == row["data_set_name"]
-    ][files_df.feature_config_name == row["feature_config_name"]][
-        files_df.data == row["data"]
-    ]
+    group_df = files_df[files_df.file_directory == row["file_directory"]]
     json_data = group_df.to_dict("records")
     if not json_data:
         continue
-    # json_data = [load_json_to_dict(file) for file in this_group_file]
+
+    list_of_conditions.append(
+        dict(
+            strategy_name=row["strategy_name"],  # 2
+            data_set_name=row["data_set_name"],  # 3
+            feature_extraction=row["feature_config"]["extractor_key"],  # 3
+            model=row["feature_config"]["model"],  # 4
+            features_key=row["feature_config"]["features_key"],  # 2
+            label=row["data"]["label_column"],  # 2 + 1
+            filter=row["data"]["filter_data"],  # 2 + 1
+        )
+    )
+
     files_df.drop(group_df.index, axis=0, inplace=True)
     plot_data = []
     times = []
@@ -88,7 +105,79 @@ for i, row in files_df.iterrows():
     identifier += 1
 
 df = pd.DataFrame(list_of_dict_data)
-df.to_csv("./server_result/preprocess_parallel_result.csv", index=False)
 
 # https://drive.google.com/drive/u/0/folders/1Ob0AM1ElCen5ATf5yZ3iO41KsUSaPua7
 # https://public.tableau.com/app/profile/ranjan.bhattarai/viz/AmirTableauDashboard/Dashboard?publish=yes
+
+
+dataset_list = ["vande", "vandis", "cultural"]
+
+models = [
+    "SVC(probability=True)",
+    "MultinomialNB()",
+    "RandomForestClassifier()",
+    "LogisticRegression()",
+]
+feature_extractors = ["TFIDF_High", "TFIDF_Low", "BagOfWords"]
+features_key = ["baseline", "endnote", "fulltextpdf"]
+
+strategies = ["max_prob", "uncertainty"]
+label_column_list_1 = ["title_label", "fulltext_label"]
+filter_data_list_1 = ["all", "endnote"]
+
+label_column_list_2 = ["fulltext_label"]
+filter_data_list_2 = ["fulltext"]
+
+
+list_of_combinations = []
+for dataset in dataset_list:
+    for model in models:
+        for feature_extractor in feature_extractors:
+            for features_before_and_after in features_key:
+                for strategy in strategies:
+                    for label_column in label_column_list_1:
+                        for filter_data in filter_data_list_1:
+                            list_of_combinations.append(
+                                dict(
+                                    data_set_name=dataset,
+                                    model=model,
+                                    feature_extraction=feature_extractor,
+                                    features_key=features_before_and_after,
+                                    strategy_name=strategy,
+                                    label=label_column,
+                                    filter=filter_data,
+                                )
+                            )
+                    for label_column in label_column_list_2:
+                        for filter_data in filter_data_list_2:
+                            list_of_combinations.append(
+                                dict(
+                                    data_set_name=dataset,
+                                    model=model,
+                                    feature_extraction=feature_extractor,
+                                    features_key=features_before_and_after,
+                                    strategy_name=strategy,
+                                    label=label_column,
+                                    filter=filter_data,
+                                )
+                            )
+
+
+df_combinations = pd.DataFrame(list_of_combinations)
+df_conditions = pd.DataFrame(list_of_conditions)
+
+# remove df conditions from df combinations
+for index, row in df_conditions.iterrows():
+    a = df_combinations[
+        (df_combinations["data_set_name"] == row["data_set_name"])
+        & (df_combinations["model"] == row["model"])
+        & (df_combinations["feature_extraction"] == row["feature_extraction"])
+        & (df_combinations["features_key"] == row["features_key"])
+        & (df_combinations["strategy_name"] == row["strategy_name"])
+        & (df_combinations["label"] == row["label"])
+        & (df_combinations["filter"] == row["filter"])
+    ]
+    df_combinations = df_combinations.drop(a.index)
+
+
+df.to_csv("./app/result/server_result 3/preprocess_paresult.csv", index=False)
