@@ -14,6 +14,7 @@ from app.configs import (
     number_of_papers,
     strategies,
 )
+from app.feature_extractor.mapper import get_feature_extractor_class
 
 new_feature_configs = {}
 for key, feature_config in feature_configs.items():
@@ -39,7 +40,21 @@ for key, feature_config in feature_configs.items():
         new_feature_configs[new_key] = copy.deepcopy(feature_config)
         new_feature_configs[new_key]["features_key"] = key_ext
         new_feature_configs[new_key] = {**new_feature_configs[new_key], **extractor}
+
 feature_configs = copy.deepcopy(new_feature_configs)
+
+for key, feature_config in feature_configs.items():
+    FeatureExtractorClass = get_feature_extractor_class(feature_config.pop("tokenizer"))
+    feature_extractor = FeatureExtractorClass(
+        feature_before_vectorize=feature_config.get("feature_before_vectorize"),
+        feature_after_vectorize=feature_config.get("feature_after_vectorize"),
+        the_percentile=feature_config.get("percentile"),
+        # ngram_max=feature_config.pop('ngram_max'),
+        tokenizer_max_df=feature_config.get("tokenizer_max_df"),
+        tokenizer_min_df=feature_config.get("tokenizer_min_df"),
+    )
+    feature_configs[key]["feature_extractor"] = feature_extractor
+
 
 for key, strategy in strategies.items():
     strategies[key] = {

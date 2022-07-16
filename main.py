@@ -45,14 +45,9 @@ if __name__ == "__main__":
             the_config["learning_model"] = LearningModel(
                 the_config["data_obj"],
                 model=features["model"],
-                the_percentile=features["percentile"],
                 sampler=features["sampler"],
-                tokenizer=features["tokenizer"],
                 revectorize=features["revectorize"],
-                tokenizer_max_df=features["tokenizer_max_df"],
-                tokenizer_min_df=features["tokenizer_min_df"],
-                feature_before_vectorize=features["feature_before_vectorize"],
-                feature_after_vectorize=features["feature_after_vectorize"],
+                feature_extractor=features["feature_extractor"],
             )
             the_config["agent"] = ActiveLearningAgent(
                 learning_model=the_config["learning_model"],
@@ -73,6 +68,7 @@ if __name__ == "__main__":
             the_config["learning_model"] = None
             the_config["data_obj"] = None
             the_config["agent"] = None
+            the_config["feature_config"]["feature_extractor"] = None
             features["model"] = str(features["model"])
 
             export_json_file(
