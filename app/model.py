@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from sampler.mapper import get_sampler_class
 from sklearn.naive_bayes import MultinomialNB
 
 
@@ -18,7 +19,7 @@ class LearningModel:
         self.data = data.data.copy()
         self.number_of_sd = number_of_sd
         self.sd_counter = 0
-        self.sampler = sampler
+        self.SamplerClass = get_sampler_class(sampler)
         self.feature_extractor = feature_extractor
 
         self._init_data()
@@ -56,45 +57,7 @@ class LearningModel:
         self.test_set = test_set
 
     def balance_data(self):
-        balance_data_type = self.sampler
-        if not balance_data_type:
-            return
-        elif balance_data_type == "RandomOverSampler":
-            from imblearn.over_sampling import RandomOverSampler
-
-            sampler = RandomOverSampler(random_state=42)
-        elif balance_data_type == "SMOTE":
-            from imblearn.over_sampling import SMOTE
-
-            sampler = SMOTE(random_state=42)
-        elif balance_data_type == "ADASYN":
-            from imblearn.over_sampling import ADASYN
-
-            sampler = ADASYN(random_state=42)
-        elif balance_data_type == "SMOTEENN":
-            from imblearn.over_sampling import SMOTEENN
-
-            sampler = SMOTEENN(random_state=42)
-        elif balance_data_type == "SMOTETomek":
-            from imblearn.over_sampling import SMOTETomek
-
-            sampler = SMOTETomek(random_state=42)
-        elif balance_data_type == "RandomUnderSampler":
-            from imblearn.under_sampling import RandomUnderSampler
-
-            sampler = RandomUnderSampler(random_state=42)
-        elif balance_data_type == "NearMiss":
-            from imblearn.under_sampling import NearMiss
-
-            sampler = NearMiss(random_state=42)
-        elif balance_data_type == "CondensedNearestNeighbour":
-            from imblearn.under_sampling import CondensedNearestNeighbour
-
-            sampler = CondensedNearestNeighbour(random_state=42)
-        elif balance_data_type == "EditedNearestNeighbours":
-            from imblearn.under_sampling import EditedNearestNeighbours
-
-            sampler = EditedNearestNeighbours(random_state=42)
+        sampler = self.SamplerClass()
         self.training_set, self.label_set = sampler.fit_resample(
             self.training_set, self.label_set
         )
