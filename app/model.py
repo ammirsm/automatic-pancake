@@ -58,6 +58,8 @@ class LearningModel:
         self.test_set = test_set
 
     def balance_data(self):
+        if not self.SamplerClass:
+            return
         sampler = self.SamplerClass()
         self.training_set, self.label_set = sampler.fit_resample(
             self.training_set, self.label_set
