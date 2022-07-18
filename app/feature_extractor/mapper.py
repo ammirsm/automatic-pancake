@@ -9,4 +9,4 @@ def get_feature_extractor_class(tokenizer):
         "BOW": Bow,
         "Scibert": Scibert,
     }
-    return mapper[tokenizer]
+    return mapper.get(tokenizer)
