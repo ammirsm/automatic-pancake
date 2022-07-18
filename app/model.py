@@ -1,7 +1,8 @@
 import numpy as np
 import pandas as pd
-from sampler.mapper import get_sampler_class
 from sklearn.naive_bayes import MultinomialNB
+
+from app.sampler.mapper import get_sampler_class
 
 
 class LearningModel:
