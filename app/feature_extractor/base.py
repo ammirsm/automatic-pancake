@@ -26,16 +26,21 @@ class FeatureExtractorBase:
         self.features_vectorized = None
         self.test_set_vectorized = None
 
+        self.features_vectorized_key = "features_vectorize"
+        self.features_key = "features"
+
     def init_vectorizer_data(self, data):
-        data["features_vectorize"] = ""
+        data[self.features_vectorized_key] = ""
         for i in self.features_for_vectorize:
-            data["features_vectorize"] = data["features_vectorize"] + " " + data[i]
+            data[self.features_vectorized_key] = (
+                data[self.features_vectorized_key] + " " + data[i]
+            )
 
-        data["features"] = ""
+        data[self.features_key] = ""
         for i in self.features:
-            data["features"] = data["features"] + " " + data[i]
+            data[self.features_key] = data[self.features_key] + " " + data[i]
 
-        self.feature_vectorize_data = data["features_vectorize"]
+        self.feature_vectorize_data = data[self.features_vectorized_key]
 
     def feature_selection(self, training_set_row_index, label_set):
         training_set = (self.features_vectorized)[training_set_row_index]
