@@ -1,7 +1,6 @@
-from max_prob import MaxProb
-from max_uncertainty import Uncertainty
-
 from .base import QueryStrategyBase
+from .max_prob import MaxProb
+from .max_uncertainty import Uncertainty
 
 
 class MixChecking(QueryStrategyBase):
