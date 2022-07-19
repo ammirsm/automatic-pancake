@@ -14,7 +14,7 @@ from app.configs import (
     number_of_papers,
     strategies,
 )
-from app.feature_extractor.mapper import get_feature_extractor_class
+from app.feature_extraction.utils import get_feature_extraction_class
 from app.query_strategy.utils import get_query_class
 
 new_feature_configs = {}
@@ -45,7 +45,9 @@ for key, feature_config in feature_configs.items():
 feature_configs = copy.deepcopy(new_feature_configs)
 
 for key, feature_config in feature_configs.items():
-    FeatureExtractorClass = get_feature_extractor_class(feature_config.pop("tokenizer"))
+    FeatureExtractorClass = get_feature_extraction_class(
+        feature_config.pop("tokenizer")
+    )
     feature_extractor = FeatureExtractorClass(
         feature_before_vectorize=feature_config.get("feature_before_vectorize"),
         feature_after_vectorize=feature_config.get("feature_after_vectorize"),

@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.naive_bayes import MultinomialNB
 
-from app.sampler.mapper import get_sampler_class
+from app.balance.utils import get_sampler_class
 
 
 class LearningModel:
