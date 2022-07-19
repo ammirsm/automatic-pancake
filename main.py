@@ -49,13 +49,17 @@ if __name__ == "__main__":
                 revectorize=features["revectorize"],
                 feature_extractor=features["feature_extractor"],
             )
-            the_config["agent"] = ActiveLearningAgent(
+            QueryStrategyClass = the_config.pop("strategy_class")
+            query_strategy = QueryStrategyClass(
                 learning_model=the_config["learning_model"],
-                name=name,
                 each_cycle=cycle,
-                update_training_set_strategy=the_config["strategy_name"],
                 query_ratio=the_config["strategy"]["step"],
                 prioritize=features["prioritize"],
+            )
+            the_config["agent"] = ActiveLearningAgent(
+                query_strategy=query_strategy,
+                learning_model=the_config["learning_model"],
+                name=name,
             )
             the_config["agent"].start_active_learning()
 

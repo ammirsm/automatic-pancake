@@ -15,6 +15,7 @@ from app.configs import (
     strategies,
 )
 from app.feature_extractor.mapper import get_feature_extractor_class
+from app.query_strategy.utils import get_query_class
 
 new_feature_configs = {}
 for key, feature_config in feature_configs.items():
@@ -81,6 +82,7 @@ for label_column in label_column_list:
                             ),
                             "strategy": copy.deepcopy(strategy),
                             "strategy_name": strategy_name,
+                            "strategy_class": get_query_class(strategy_name),
                             "data_set_name": data_set_name,
                             "feature_config": copy.deepcopy(feature_config),
                             "feature_config_name": feature_config_name,
