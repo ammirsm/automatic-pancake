@@ -49,7 +49,7 @@ class ActiveLearningAgent:
         if self.learning_model.revectorize and new_founded_papers_count > 10:
             print("vectorize again")
             self.vectorized_cycle = len(self.founded_papers_count) - 1
-            self.learning_model.vectorize_init()
+            self.learning_model.feature_extractor.vectorize_init()
 
     def start_active_learning(self):
         start_time = timeit.default_timer()
