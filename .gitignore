@@ -293,7 +293,7 @@ pip-selfcheck.json
 
 env/
 asset/
-app/configs.py
+app/configs.json
 result/
 output/
 logs/
