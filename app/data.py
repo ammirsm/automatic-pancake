@@ -8,7 +8,7 @@ from app.import_export import import_data
 class Data:
     def __init__(
         self,
-        pickle_file,
+        data_set_file,
         label_column,
         features_columns_cleaning,
         filter_data="all",
@@ -18,17 +18,23 @@ class Data:
         **kwargs
     ):
         self.filter_data = filter_data
-        self.pickle_file = pickle_file
+        self.data_set_file = data_set_file
         self.cycle = cycle
         self.papers_count = papers_count
         self.label_column = label_column
         self.features_columns = features_columns_cleaning
-        self.pure_data = import_data(self.pickle_file)
         self.init_data()
         self.number_of_papers = self.data.shape[0]
 
     def init_data(self):
-        self.data = pd.DataFrame(self.pure_data)
+        if self.data_set_file.endswith(".pickle"):
+            pure_data = import_data(self.data_set_file)
+            self.data = pd.DataFrame(pure_data)
+        elif self.data_set_file.endswith(".csv"):
+            self.data = pd.read_csv(self.data_set_file)
+        else:
+            raise ValueError("your data set file should end with .csv or .pickle")
+
         self.data = self.data.fillna("")
         self.data = self.data[self.data["is_duplicate"] == 0]
         self.data["label"] = self.data[self.label_column]

@@ -179,7 +179,7 @@ def load_from_json(filepath):
         configs.append(
             Config(
                 data=dict(
-                    pickle_file=data_set_path,
+                    data_set_file=data_set_path,
                     name=data_set_name,
                     label_column=label_column,
                     features_columns_cleaning=configs_data.get(
