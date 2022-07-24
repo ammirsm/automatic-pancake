@@ -10,14 +10,26 @@
   ],
   "output_dir": "output",
   "result": "result/",
-  "models":[
-    {
+  "models": {
+    "LogisticRegression": {
+      "name": "LogisticRegression",
+    },
+    "NaiveBayes": {
+      "name": "NaiveBayes",
+    },
+    "SVM": {
+      "name": "SVM",
+      "kwargs": {
+        "probability": true
+      }
+    },
+    "RandomForest": {
       "name": "RandomForest",
       "kwargs": {
         "n_estimators": 100
       }
     }
-  ],
+  },
   "feature_extractors":{
     "TFIDF_Low": {
       "tokenizer": "TF-IDF",
