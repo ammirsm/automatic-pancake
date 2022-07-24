@@ -14,6 +14,8 @@ class Data:
         filter_data="all",
         papers_count=None,
         cycle=20,
+        *args,
+        **kwargs
     ):
         self.filter_data = filter_data
         self.pickle_file = pickle_file

@@ -4,23 +4,22 @@ import warnings
 from datetime import datetime
 
 from app.agent import ActiveLearningAgent
+from app.configs import Config, load_from_json
 from app.data import Data
 from app.import_export import export_json
-from app.load_configs import configs, main_directory_name, result
 from app.model import LearningModel
 
 warnings.filterwarnings("ignore")
 
 
 def export_json_file(dirs, file_name, the_data):
-    path = result + "/".join(dirs)
+    path = Config.result + "/".join(dirs)
     os.makedirs(path, exist_ok=True)
     export_json(the_data, f"{path}/{file_name}.json")
 
 
 if __name__ == "__main__":
-    if not main_directory_name:
-        main_directory_name = datetime.now().strftime("%m-%d-%Y_%H:%M:%S")
+    configs = load_from_json("./app/configs.json")
     first_time = datetime.now()
     print("START", flush=True)
     for the_config in configs:
@@ -54,7 +53,7 @@ if __name__ == "__main__":
             )
 
             # Create QueryStrategy object
-            QueryStrategyClass = the_config.strategy_class
+            QueryStrategyClass = the_config.strategy.get("strategy_class")
             query_strategy = QueryStrategyClass(
                 learning_model=learning_model, **the_config.query_strategy_data
             )
@@ -75,7 +74,7 @@ if __name__ == "__main__":
             export_data["number_of_papers"] = data_obj.number_of_papers
             export_data["number_of_relavant"] = data_obj.number_of_relavant
             output_dir = the_config.output_dir
-            output_dir.insert(0, main_directory_name)
+            output_dir.insert(0, Config.main_directory_name)
             export_json_file(
                 output_dir,
                 str(uuid.uuid4().hex),
