@@ -296,8 +296,8 @@ asset/
 app/configs.json
 result/
 output/
-logs/
-configs/
+parallel_logs/
+parallel_configs/
 
 parallel_config.env
 # processes id in parallel running

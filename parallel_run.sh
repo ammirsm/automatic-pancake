@@ -25,18 +25,19 @@ echo "main directory ---> $MAIN_DIR_NAME"
 
 # Starting parallel
 echo starting new processes
+rm .jobs_id
 for CONF in $CONFIGS
 do
-  cp $CONFIGS_DIR$CONF app/configs.py
+  cp $CONFIGS_DIR$CONF app/configs.json
   for (( i=1; i<=$NUMBER_OF_ITERATION ; i++ ))
   do
-#    echo $CONFIGS_DIR$CONF
+    echo $CONFIGS_DIR$CONF
     LOG_FILE=${LOGS_DIR}${MAIN_DIR_NAME}/${CONF}${i}.log
     python main.py $MAIN_DIR_NAME &>> $LOG_FILE &
+    jobs -p >> .jobs_id
   done
   sleep 5
 done
 
 # Keep the processes ID
-jobs -p > .jobs_id
 echo $(cat .jobs_id | wc -l) process created
