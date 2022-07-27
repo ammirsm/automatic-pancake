@@ -13,7 +13,7 @@ strategies = ["max_prob", "uncertainty"]
 label_column_list = ["title_label", "fulltext_label"]
 filter_data_list = ["all", "endnote", "fulltext"]
 
-csv = open("data.csv", "wb")
+csv = open("../data.csv", "wb")
 
 number_of_points = {"cultural": 9339, "vande": 6184, "vandis": 10953}
 relavant = {"cultural": 1200, "vande": 300, "vandis": 600}

@@ -39,6 +39,12 @@ print(data.report_obj) # report object will contain all of the data
 {'total_papers': 12107, 'total_paper_english': 10887, 'duplicate_papers': 2768, 'fulltext_accepted': 1379, 'title_accepted': 3080, 'libkey_founded': 3355, 'libkey_open_access': 434, 'libkey_fulltext_available': 2916, 'crossref_founded': 3385, 'endnote_papers_founded': 2165, 'pdf_manual_founded': 6055}
 ```
 
+
+## Vandis
+```python
+{'total_papers': 10953, 'total_paper_english': 10933, 'duplicate_papers': 0, 'fulltext_accepted': 73, 'title_accepted': 806, 'libkey_founded': 6719, 'libkey_open_access': 1530, 'libkey_fulltext_available': 5902, 'crossref_founded': 7030, 'endnote_papers_founded': 1388, 'pdf_manual_founded': 698}
+```
+
 ## configs
 
 - base lines
