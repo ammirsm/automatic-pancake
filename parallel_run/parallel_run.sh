@@ -1,5 +1,8 @@
 #!/bin/bash
 
+PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/../"
+cd $PROJECT_ROOT
+
 # Kill other processes that run before
 cat .jobs_id | xargs kill &> /dev/null
 if [[ $? ==  0 ]]
