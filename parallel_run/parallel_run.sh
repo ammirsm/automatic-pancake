@@ -20,7 +20,7 @@ fi
 # Configs for runnong parallel
 set -e
 
-. parallel_config.env
+. ./parallel_run/parallel_config.env
 
 mkdir -p $LOGS_DIR$MAIN_DIR_NAME/
 CONFIGS=$(ls $CONFIGS_DIR)
