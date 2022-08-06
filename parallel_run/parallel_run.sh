@@ -6,7 +6,7 @@ PROJECT_ROOT="${SCRIPT_PATH}/../"
 cd $PROJECT_ROOT
 
 # Kill other processes that run before
-cat .jobs_id | xargs kill &> /dev/null
+cat .jobs_id 2&> /dev/null | xargs kill &> /dev/null
 if [[ $? ==  0 ]]
 then
   cat .jobs_id | xargs echo
@@ -29,7 +29,7 @@ CONFIGS=$(ls $SCRIPT_PATH/$CONFIGS_DIR)
 echo "main directory ---> $MAIN_DIR_NAME"
 
 # Starting parallel
-rm $SCRIPT_PATH/.jobs_id || true
+rm $SCRIPT_PATH/.jobs_id 2&> /dev/null || true
 for CONF in $CONFIGS
 do
   cp $SCRIPT_PATH/$CONFIGS_DIR$CONF app/configs.json
