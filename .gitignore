@@ -304,3 +304,4 @@ parallel_config.env
 .jobs_id
 
 *.csv
+!sample_files/**
