@@ -1,52 +1,91 @@
-# Active learning agent
-TODO:
+# Auto Pancake Agent
+
+[comment]: <> (Paper description)
+
+## Overview
+This repository serves as a test platform for the active learning agent for the systematic review of scientific publications. We will require a RIS file with the location to the PDFs and meta-data of your papers that you wish to add to your database for this.
+
+You will require the votes for title screening and the votes for the full-text screening decision for simulation purposes, which you must provide into the system as a dataset.
+
+Classifiers, feature extractions, decisions, and query strategies will all be handled by separate modules in the system.
+
+The simulations will generate a file with the system's results. The findings have been shown on the [Tabluea Dashboard](https://hubmeta.com/explain-ai).
+
+If you wish to use this package in production, you will just need the classes and functions, which you may incorporate into your application.
 
 ## Setup
+
+### Docker Setup
+You can install docker and build up the repository using docker-compose.
 ```
+# docker compose up
+```
+### Regular Setup
+Another way for setting up the repository will be using traditional virtual environment setup as below.
+
+```
+$ python -m venv .venv
+$ source .venv/bin/activate
 $ pip install -r requirements.txt
+```
+
+## Usage
+
+
+### Feed Data
+[comment]: <> (### You need to prepare data which will be pass to the other file)
+For configuration of your active learning agent you can use the following parts.
+
+### Prepare config
+To run the simulation, you'll need a sample configuration and dataset. You may look at the example structure and design your own to put up your own setup and dataset.
+
+```
+$ cp sample_files/configs/sample_configs.json ./app/configs.json
+```
+### Run simulation
+In your docker container or Python environment, use the following command to run simulation based on created dataset and config.
+```
+$ python main.py
+```
+
+### Run parallel simulation
+Running several simulations, such as those in the article, may require a lot of server time, specifically if they are done sequentially. We created a tool for parallelizing simulations for this purpose. To do this, place the configurations you wish to execute in parallel under `/parallel run/json configs/` and it will run each configuration as a distinct process.
+
+For parallel setup, you must first establish a config directory and a default.env file.
+```
+$ mkdir -p ./parallel_run/json_configs/
+$ cp parallel_run/parallel_config.env.sample parallel_run/parallel_config.env
+```
+Then, transfer the example configs file to the newly created directory.
+```
+$ cp sample_files/configs/parallel_configs/* ./parallel_run/json_configs/
+```
+Then you can run them parallelly
+
+```
+$ ./parallel_run/parallel_run.sh
+```
+### Export result
+Your results will be stored in the directory `./results/`.
+
+There is an option to use the results and convert them to a format suitable for tabluea and other visualisation tools, such as an excel file. Look at `./app/result processing utils` to see how to achieve this.
+
+Some visualisation features are available for the findings. The `draw.py` file contains all of the routines.
+
+## Development
+For pushing something on our codebase you need to clone our repository:
+```
+$ git clone github.com:ammirsm/auto-pancake-agent
+```
+
+We're using [pre-commit](https://pre-commit.com/) to lint our code.
+```
 $ pre-commit install
 ```
+You must perform pre-commit linting before pushing any changes or issuing merge requests.
 
-## Download stopwords from the repository
+## Further development
+[ ] ### You can add more features to the agent
 
-## Preprocess your data with preprocess module
-```python
-from app.data_processing.preprocess import PreprocessTFIDF
-path = "" # your path to the data pickle
-path_export = "" # preprocessed data pickle export
-data = PreprocessTFIDF(path)
-data.process()
-data.export(path_export)
-data.report()
-print(data.report_obj) # report object will contain all of the data
-# ```
-
-
-
-## TODO LIST
-[ ] Preprocessing of the data files cleaning
-[ ] Crossref function to get the references
-[ ] Cleaning the data and model files
-
-
-## Van De Dataset
-``` python
-{'total_papers': 6184, 'total_paper_english': 6152, 'duplicate_papers': 0, 'fulltext_accepted': 43, 'title_accepted': 388, 'libkey_founded': 1318, 'libkey_open_access': 254, 'libkey_fulltext_available': 1156, 'crossref_founded': 1375, 'endnote_papers_founded': 804, 'pdf_manual_founded': 327}
-```
-
-## Cultural
-```python
-{'total_papers': 12107, 'total_paper_english': 10887, 'duplicate_papers': 2768, 'fulltext_accepted': 1379, 'title_accepted': 3080, 'libkey_founded': 3355, 'libkey_open_access': 434, 'libkey_fulltext_available': 2916, 'crossref_founded': 3385, 'endnote_papers_founded': 2165, 'pdf_manual_founded': 6055}
-```
-
-
-## Vandis
-```python
-{'total_papers': 10953, 'total_paper_english': 10933, 'duplicate_papers': 0, 'fulltext_accepted': 73, 'title_accepted': 806, 'libkey_founded': 6719, 'libkey_open_access': 1530, 'libkey_fulltext_available': 5902, 'crossref_founded': 7030, 'endnote_papers_founded': 1388, 'pdf_manual_founded': 698}
-```
-
-## configs
-
-- base lines
--
-- new features
+## Citation
+### link to the paper and the visualization
