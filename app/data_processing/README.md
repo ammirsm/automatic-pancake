@@ -3,7 +3,9 @@ In this function we will use some preprocessing tools in NLP to clean the data a
 
 ##Usage
 ###How to preprocess data
-
+```
+$ python main.py /path/to/your/dataset.ris /path/to/your/pdf/dir/
+```
 ####TODO: Add python commands
 
 ####Sample data
