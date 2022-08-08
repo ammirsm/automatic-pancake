@@ -26,7 +26,7 @@ def main(name, ris_path, pdf_path, export_file_path):
 def __main__():
     ris_path = argv[1]
     pdf_path = argv[2]
+    ris_dir = argv[3]
     ris_path_slited = ris_path.split("/")
-    ris_dir = "/".join(ris_path_slited[:-1])
     name = ris_path_slited[-1].replace(".ris", "")
     main(name=name, ris_path=ris_path, pdf_path=pdf_path, export_file_path=ris_dir)
