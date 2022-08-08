@@ -24,7 +24,6 @@ run this command and see the result
 $ python -m venv .venv
 $ source .venv/bin/activate
 $ pip install -r requirements.txt
-$ pre-commit install
 ```
 
 ## Usage
@@ -59,10 +58,27 @@ $ ./parallel_run/parallel_run.sh
 ```
 
 ### Export result
+Your results will be saved in the `./results/` directory.
+
+There is an option for using the results and exporting them to for example excel file which can be usable for tabluea and other visualization tools.
+
+There are some visualization feature that can be used for the results. All of the functions are located in the `draw.py` file.
+
+
+## Development
+For pushing something on our codebase you need to clone our repository:
+```
+$ git clone github.com:ammirsm/auto-pancake-agent
+```
+
+We're using [pre-commit](https://pre-commit.com/) to lint our code.
+```
+$ pre-commit install
+```
+Before you push any changes and sending merge requests you need to run pre-commit linting.
 
 ## Further development
-
-## Formatting and linting
+[ ] ### You can add more features to the agent
 
 ## Citation
 ### link to the paper and the visualization
