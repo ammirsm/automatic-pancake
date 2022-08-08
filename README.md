@@ -9,7 +9,7 @@ You will require the votes for title screening and the votes for the full-text s
 
 Classifiers, feature extractions, decisions, and query strategies will all be handled by separate modules in the system.
 
-The simulations will generate a file with the system's results. The findings have been shown on the [Tabluea Dashboard](https://hubmeta.com/explain-ai).
+The simulations will generate a file with the system's results. The findings have been shown on the [Tabluea Dashboard](https://hubmeta.com/exploring-ai).
 
 If you wish to use this package in production, you will just need the classes and functions, which you may incorporate into your application.
 
