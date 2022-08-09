@@ -1,3 +1,5 @@
+from os import makedirs
+
 import pdftotext
 import rispy
 
@@ -36,9 +38,10 @@ def pdf_reader(ris_path, pdf_path, name):
     papers = read_ris(ris_path)
     for i, entry in enumerate(papers):
         if "file_attachments1" in entry:
-            papers[i]["fulltext"] = pdftotext_reader(
-                pdf_path + entry["file_attachments1"].split("//")[1]
+            papers[i]["endnote-pdf_text"] = pdftotext_reader(
+                pdf_path + entry["file_attachments1"].split("//")[-1]
             )
 
+    makedirs("asset/endnote_ris/", exist_ok=True)
     export_data(papers, "asset/endnote_ris/" + name + ".pickle")
     return "asset/endnote_ris/" + name + ".pickle"
