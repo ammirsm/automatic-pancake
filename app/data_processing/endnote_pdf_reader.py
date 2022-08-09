@@ -42,6 +42,3 @@ def pdf_reader(ris_path, pdf_path, name):
 
     export_data(papers, "asset/endnote_ris/" + name + ".pickle")
     return "asset/endnote_ris/" + name + ".pickle"
-
-
-pdf_reader()
