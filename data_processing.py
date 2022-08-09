@@ -1,5 +1,5 @@
 # run pdf reader
-from os import argv
+from sys import argv
 
 from app.data_processing.endnote_pdf_reader import pdf_reader
 from app.data_processing.preprocess import PreprocessTFIDF
@@ -23,10 +23,15 @@ def main(name, ris_path, pdf_path, export_file_path):
 # TODO: add a function somehow to get the name of the file from shell script
 
 
-def __main__():
+def __name__():
     ris_path = argv[1]
     pdf_path = argv[2]
-    ris_dir = argv[3]
+    output_dir = argv[3]
     ris_path_slited = ris_path.split("/")
     name = ris_path_slited[-1].replace(".ris", "")
-    main(name=name, ris_path=ris_path, pdf_path=pdf_path, export_file_path=ris_dir)
+    main(
+        name=name,
+        ris_path=ris_path,
+        pdf_path=pdf_path,
+        export_file_path=f"{output_dir}/{name}.pickle",
+    )
