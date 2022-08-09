@@ -23,7 +23,7 @@ def main(name, ris_path, pdf_path, export_file_path):
 # TODO: add a function somehow to get the name of the file from shell script
 
 
-def __name__():
+if __name__ == "__main__":
     ris_path = argv[1]
     pdf_path = argv[2]
     output_dir = argv[3]
