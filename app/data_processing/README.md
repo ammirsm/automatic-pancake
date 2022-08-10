@@ -1,4 +1,4 @@
-# Conver your RIS and PDFs to suitable format :face_with_spiral_eyes: :boom: :pinched_fingers:
+# Convert your RIS and PDFs to suitable format :face_with_spiral_eyes: :boom: :pinched_fingers:
 
 ## Preprocessing:
 In this function we will use some preprocessing tools in NLP to clean the data and make it ready for active learning process.
