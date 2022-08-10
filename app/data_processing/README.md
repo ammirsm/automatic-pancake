@@ -25,8 +25,8 @@ On Fedora, Red Hat, and friends:
 sudo yum install gcc-c++ pkgconfig poppler-cpp-devel python-devel redhat-rpm-config
 ```
 
-##Usage
-###How to preprocess data
+## Usage
+### How to preprocess data
 ```
 $ python data_processing.py /path/to/your/dataset.ris /path/to/your/pdf/dir/ /path/to/your/output/dir/
 ```
