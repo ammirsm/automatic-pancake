@@ -13,7 +13,8 @@ from app.import_export import export_data, import_data
 
 
 class PreprocessBase:
-    def __init__(self, data_path):
+    def __init__(self, data_path, name):
+        self.name = name
         self.nlp_spacy = None
         self.stemmer = None
         self.stop_words = None
@@ -53,8 +54,8 @@ class PreprocessTFIDF(PreprocessBase):
     max_token_length = 3
     report_obj = {}
 
-    def __init__(self, data_path):
-        super().__init__(data_path)
+    def __init__(self, data_path, name):
+        super().__init__(data_path, name)
         self.nltk_init()
         self.init_spacy()
         self.init_stop_words()
@@ -97,7 +98,8 @@ class PreprocessTFIDF(PreprocessBase):
         self._language_detection("meta_data", "language")
 
     def export(self, output_path):
-        export_data(self.data, output_path)
+        export_data(self.data, f"{output_path}/{self.name}.pickle")
+        self.data.to_csv(f"{output_path}/{self.name}.csv")
 
     def report(self):
         """
@@ -135,14 +137,16 @@ class PreprocessTFIDF(PreprocessBase):
         self.report_obj = {**self.report_obj, **report}
 
     def _merge_two_columns(self, column_1, column_2, target_column, empty_value=""):
-        self.data[target_column] = empty_value
+        if target_column not in self.data.columns:
+            self.data[target_column] = empty_value
+
         filled_with_column_1 = 0
         filled_with_column_2 = 0
         for index, row in self.data.iterrows():
-            if row[column_1] != empty_value:
+            if column_1 in self.data.columns and row[column_1] != empty_value:
                 self.data.loc[index, target_column] = row[column_1]
                 filled_with_column_1 += 1
-            elif row[column_2] != empty_value:
+            elif column_2 in self.data.columns and row[column_2] != empty_value:
                 self.data.loc[index, target_column] = row[column_2]
                 filled_with_column_2 += 1
         return filled_with_column_1, filled_with_column_2
@@ -194,6 +198,8 @@ class PreprocessTFIDF(PreprocessBase):
         sample column_names = {'title': 'title_preprocessed', 'description': 'description_preprocessed'}
         """
         for read, write in column_names.items():
+            if read not in self.data.columns:
+                continue
             self.data[write] = self.data[read]
             self.data[write] = self.data[write].apply(self._convert_to_unicode)
             self.data[write] = self.data[write].apply(self._preprocess_semantic_text)

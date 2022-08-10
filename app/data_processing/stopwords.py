@@ -1,8 +1,8 @@
 import gensim
 
 stop_words_path = [
-    "./asset/stopwords/scientificstopwords_en.txt",
-    "./asset/stopwords/en.txt",
+    "./app/data_processing/stopwords_asset/scientificstopwords_en.txt",
+    "./app/data_processing/stopwords_asset/en.txt",
 ]
 
 
