@@ -1,7 +1,7 @@
 # Auto Pancake Agent Simulation :pancakes: :robot: :ghost:
 ## Systematic review active learning agent simulation
 ![automatic pancake](https://github.com/ammirsm/automatic-pancake/blob/main/automatic-pancake.jpg?raw=true)
-Note: This repository is not about [Chefstack Automatic Pancake Machine](https://uncrate.com/chefstack-automatic-pancake-machine/) and we're just using it as a sample of automatic pancake machine :laughing:.
+*Note: This repository is not about [Chefstack Automatic Pancake Machine](https://uncrate.com/chefstack-automatic-pancake-machine/) and we're just using it as a sample of automatic pancake machine :laughing:.*
 
 
 
@@ -15,7 +15,10 @@ Classifiers, feature extractions, decisions, and query strategies will all be ha
 The simulations will generate a file with the system's results. The findings have been shown on the [Tabluea Dashboard](https://hubmeta.com/exploring-ai).
 
 If you wish to use this package in production, you will just need the classes and functions, which you may incorporate into your application.
+
 ![simulation process](https://github.com/ammirsm/automatic-pancake/blob/main/simulation.jpg?raw=true)
+*Note: This picture has came from the paper, for more information about the detail of the process take a look at the paper.*
+
 
 ## Setup
 
