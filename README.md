@@ -72,6 +72,11 @@ There is an option to use the results and convert them to a format suitable for 
 
 Some visualisation features are available for the findings. The `draw.py` file contains all of the routines.
 
+## Prepare your dataset
+use our data_processing scripts to convert your ris file and pdfs into the csv file.
+
+then you should add two columns (title_label, fulltext_label) to generated dataset.
+
 ## Development
 For pushing something on our codebase you need to clone our repository:
 ``` shell
