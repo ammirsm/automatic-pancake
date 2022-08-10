@@ -1,9 +1,9 @@
 # Conver your RIS and PDFs to suitable format :face_with_spiral_eyes: :boom: :pinched_fingers:
 
-##Preprocessing:
+## Preprocessing:
 In this function we will use some preprocessing tools in NLP to clean the data and make it ready for active learning process.
 
-##Setup
+## Setup
 ### Installing python dependencies
 
 Make sure you are in the root directory of the project and run the following command:
