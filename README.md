@@ -56,7 +56,7 @@ $ python main.py
 ```
 
 ### Run parallel simulation
-Running several simulations, such as those in the article, may require a lot of server time, specifically if they are done sequentially. We created a tool for parallelizing simulations for this purpose. To do this, place the configurations you wish to execute in parallel under `/parallel run/json configs/` and it will run each configuration as a distinct process.
+Running several simulations, such as those in the article, may require a lot of server time, specifically if they are done sequentially. We created a tool for parallelizing simulations for this purpose. To do this, place the configurations you wish to execute in parallel under `/parallel_run/json_configs/` and it will run each configuration as a distinct process.
 
 For parallel setup, you must first establish a config directory and a default.env file.
 ``` shell
@@ -75,15 +75,16 @@ $ ./parallel_run/parallel_run.sh
 ### Export result
 Your results will be stored in the directory `./results/`.
 
-There is an option to use the results and convert them to a format suitable for tabluea and other visualisation tools, such as an excel file. Look at `./app/result processing utils` to see how to achieve this.
+There is an option to use the results and convert them to a format suitable for tabluea and other visualisation tools, such as an excel file. Look at `./app/result_processing_utils` to see how to achieve this.
 
 Some visualisation features are available for the findings. The `draw.py` file contains all of the routines.
 
 ## Prepare your dataset
-use our data_processing scripts to convert your ris file and pdfs into the csv file.
+To prepare your dataset for active learning, use `data_processing.py` to clean the data and make it ready.
+This data processing.py script can be found in the repository and will convert your RIS and PDF files to a CSV file suited for active learning.
+When you generate the dataset for the active learning agent, you will need to add two extra columns that reflect your screening votes. For the results of the title and abstract screening (stage 1), enter your decisions as 1 and 0 (accept or reject) in the column name `title_label`, and for the fulltext screening, enter your decisions as 1 and 0 (accept or reject) in the column name `fulltext_label`.
 
-then you should add two columns (title_label, fulltext_label) to generated dataset.
-
+For more information about the data processing, please see the README.md file in the data_processing directory. [README](https://github.com/ammirsm/automatic-pancake/blob/main/app/data_processing/README.md)
 ## Development
 For pushing something on our codebase you need to clone our repository:
 ``` shell
