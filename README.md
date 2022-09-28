@@ -101,4 +101,10 @@ You must perform pre-commit linting before pushing any changes or issuing merge 
 [ ] ### You can add more features to the agent
 
 ## Citation
-### link to the paper and the visualization
+### Visualization
+You can take a look at our visualization at ([HubMeta](https://hubmeta.com/exploring-ai)) website.
+
+### Cite our paper
+Under review and we will put the citation over here in a few weeks.
+
+
