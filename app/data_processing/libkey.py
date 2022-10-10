@@ -1,9 +1,10 @@
 import requests
 
+authorization_token = "TOKEN"
 headers = {
     "Accept": "application/vnd.api+json",
     "Accept-Language": "en-us",
-    "Authorization": "Bearer 74138cd5-e5db-4ac2-9ee3-bad6764367e8",
+    "Authorization": authorization_token,
     "Cache-Control": "no-cache",
     "Connection": "keep-alive",
     "Origin": "https://libkey.io",
