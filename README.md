@@ -105,6 +105,16 @@ You must perform pre-commit linting before pushing any changes or issuing merge 
 You can take a look at our visualization at ([HubMeta](https://hubmeta.com/exploring-ai)) website.
 
 ### Cite our paper
-Under review and we will put the citation over here in a few weeks.
+Cite us with:
+```
+@article{Saeidmehr2024SystematicRU,
+  title={Systematic review using a spiral approach with machine learning},
+  author={Amirhossein Saeidmehr and Piers Steel and Faramarz Famil Samavati},
+  journal={Systematic Reviews},
+  year={2024},
+  volume={13},
+  url={https://api.semanticscholar.org/CorpusID:267019792}
+}
+```
 
 
